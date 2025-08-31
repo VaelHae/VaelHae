@@ -63,7 +63,7 @@ I'm currently learning:
   <a href="mailto:admin@VaelHae.xyz">
     <img align="left" alt="Discord" width="26px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />
   </a> &nbsp;&nbsp;
-  
+
 ## 
 
  ```bash
@@ -79,12 +79,6 @@ I'm currently learning:
 * Gender: Male
 * Name: VaelHae
 ```
-
----
-
-## ```Whatsapp``` <a href="https://wa.me/6281289682492"> <img align="left" alt="SIEGRIN | Whastapp" width="26px" src="https://github.com/siegrin/siegrin/blob/main/Assets/Whatsapp.svg" />
-[![Developer](https://img.shields.io/badge/Developer-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/6281289682492) 
-
 ---------
 
 ## ```Status 🐾```
