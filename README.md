@@ -58,12 +58,11 @@ I'm currently learning:
 --------
 ## Connect With Me 💌
   <a href="https://www.youtube.com/@VaelHae">
-    <img align="left" alt="YouTube" width="22px" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-128.png" />
+    <img align="left" alt="YouTube" width="26px" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-128.png" />
   </a> &nbsp;&nbsp;
   <a href="mailto:admin@VaelHae.xyz">
-    <img align="left" alt="Discord" width="22px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />
+    <img align="left" alt="Discord" width="26px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />
   </a> &nbsp;&nbsp;
----
 
  ```bash
 # B i o d a t a 🎨
