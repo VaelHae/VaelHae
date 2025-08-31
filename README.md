@@ -20,12 +20,6 @@
 <a href="https://discord.com/users/932817217614118943">
 <img height="80px" src="https://discord.c99.nl/widget/theme-2/932817217614118943.png" />
 </a>
-
-### Contact me: 
-
-[<img align="left" alt="YouTube" width="22px" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-128.png" />](https://www.youtube.com/@VaelHae)
-[<img align="left" alt="Discord" width="22px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />](https://www.youtube.com/@VaelHae)
-
 </br>
 
 ### Languages and Tools:
@@ -63,16 +57,12 @@ I'm currently learning:
 
 --------
 ## Connect With Me 💌
-  <a href="https://wa.me/6282219756899">
-    <img align="left" alt="SIEGRIN | Whastapp" width="26px" src="https://github.com/siegrin/siegrin/blob/main/Assets/Whatsapp.svg" />
-  </a> &nbsp;&nbsp;
-  <a href="https://www.instagram.com/rifkyekaxyz">
-    <img align="left" alt="SIEGRIN | Instagram" width="24px" src="https://github.com/siegrin/siegrin/blob/main/Assets/Instagram.svg" />
+  <a href="https://www.youtube.com/@VaelHae">
+    <img align="left" alt="YouTube" width="22px" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-128.png" />
   </a> &nbsp;&nbsp;
   <a href="mailto:admin@VaelHae.xyz">
-    <img align="left" alt="SIEGRIN | Gmail" width="26px" src="https://github.com/siegrin/siegrin/blob/main/Assets/Gmail.svg" />
+    <img align="left" alt="Discord" width="22px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />
   </a> &nbsp;&nbsp;
-  
 ---
 
  ```bash
