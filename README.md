@@ -63,7 +63,7 @@ I'm currently learning:
   <a href="mailto:admin@VaelHae.xyz">
     <img align="left" alt="Discord" width="26px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />
   </a> &nbsp;&nbsp;
-
+</br>
  ```bash
 # B i o d a t a 🎨
 
