@@ -23,10 +23,8 @@
 
 ### Contact me: 
 
-[<img align="left" alt="YouTube" width="22px" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-128.png" />](https://www.youtube.com/channel/UCehQMGUaFgzKZ8RoNT-Oc0w)
-<a href="https://dsc.gg/notnexus">
-  <img align="left" alt="Discord" width="23px" src="https://raw.githubusercontent.com/peterthehan/peterthehan/master/assets/discord.svg" />
-</a>
+[<img align="left" alt="YouTube" width="22px" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-128.png" />](https://www.youtube.com/@VaelHae)
+[<img align="left" alt="Discord" width="22px" src="https://cdn3.iconfinder.com/data/icons/social-network-flat-3/100/Discord-512.png" />](https://www.youtube.com/@VaelHae)
 
 </br>
 
