@@ -23,15 +23,18 @@
   body {
     min-height: 100vh;
     background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: 'Lato', sans-serif;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
+    padding: 40px 16px;
+  }
+
+  .page-wrapper {
+    display: flex;
+    justify-content: center;
     align-items: flex-start;
-    padding: 40px 0;
+    min-height: calc(100vh - 80px);
   }
 
   canvas {
@@ -545,7 +548,7 @@
 
 <canvas id="bgCanvas"></canvas>
 
-<div class="card">
+<div class="page-wrapper"><div class="card">
   <div class="banner">
     <div class="banner-glow"></div>
     <div class="banner-stars-layer" id="bannerStars"></div>
@@ -561,7 +564,7 @@
       <div class="avatar-ring"></div>
       <div class="avatar-ring-inner"></div>
       <div class="avatar-img">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=vaelhae&backgroundColor=0e1520" alt="Vaelhae">
+        <img src="https://i.ibb.co.com/B2TFBZb1/CHIBI-1.jpg" alt="Vaelhae">
       </div>
       <div class="avatar-glow"></div>
       <div class="particle" style="width:5px;height:5px;background:var(--teal);animation-duration:3.5s;margin:-2.5px 0 0 -2.5px;box-shadow:0 0 6px var(--teal);"></div>
@@ -638,7 +641,7 @@
       VaelHae © 2026
     </div>
   </div>
-</div>
+</div></div>
 
 <script>
 // SPLASH CANVAS — bintang + shooting stars
