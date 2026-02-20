@@ -31,83 +31,229 @@
     position: relative;
   }
 
-  /* Starfield background */
   canvas {
     position: fixed;
     inset: 0;
     z-index: 0;
+    pointer-events: none;
   }
 
-  /* Nebula glow */
   body::before {
     content: '';
     position: fixed;
-    top: 20%; left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px; height: 400px;
-    background: radial-gradient(ellipse, rgba(78,205,196,0.06) 0%, rgba(155,114,207,0.04) 40%, transparent 70%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(78,205,196,0.07) 0%, rgba(155,114,207,0.05) 40%, transparent 70%);
     pointer-events: none;
     z-index: 0;
+    animation: nebulaPulse 8s ease-in-out infinite;
   }
 
+  @keyframes nebulaPulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%,-50%) scale(1.15); }
+  }
+
+  /* SPLASH */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: #070c11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 1.2s cubic-bezier(0.4,0,0.2,1), visibility 1.2s ease;
+  }
+
+  .splash.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .splash-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(78,205,196,0.08) 0%, rgba(155,114,207,0.05) 40%, transparent 70%);
+    animation: splashGlowPulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes splashGlowPulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 1; }
+  }
+
+  .splash-moon {
+    font-size: 5rem;
+    margin-bottom: 24px;
+    animation: moonFloat 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 40px rgba(78,205,196,0.5)) drop-shadow(0 0 80px rgba(155,114,207,0.3));
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes moonFloat {
+    0%   { transform: translateY(0)     rotate(-8deg) scale(1); }
+    25%  { transform: translateY(-8px)  rotate(0deg)  scale(1.03); }
+    50%  { transform: translateY(-18px) rotate(8deg)  scale(1.06); }
+    75%  { transform: translateY(-8px)  rotate(0deg)  scale(1.03); }
+    100% { transform: translateY(0)     rotate(-8deg) scale(1); }
+  }
+
+  .splash-name {
+    font-family: 'Cinzel', serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4ecdc4, #e8f4f8, #9b72cf, #7ae8e2);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    animation: gradientShift 5s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .splash-sub {
+    font-size: 0.62rem;
+    color: #3a5a6a;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 52px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInOut 3s ease-in-out infinite;
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; color: #5a8a9a; }
+  }
+
+  .splash-btn {
+    position: relative;
+    z-index: 1;
+    padding: 15px 50px;
+    background: transparent;
+    border: 1px solid rgba(78,205,196,0.4);
+    color: #4ecdc4;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.4s;
+    box-shadow: 0 0 20px rgba(78,205,196,0.08);
+    overflow: hidden;
+  }
+
+  .splash-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(155,114,207,0.1));
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .splash-btn:hover {
+    box-shadow: 0 0 40px rgba(78,205,196,0.25);
+    border-color: rgba(78,205,196,0.8);
+    letter-spacing: 6px;
+  }
+  .splash-btn:hover::before { opacity: 1; }
+
+  .splash-hint {
+    margin-top: 18px;
+    font-size: 0.55rem;
+    color: #1e3040;
+    letter-spacing: 3px;
+    position: relative;
+    z-index: 1;
+    animation: blink 2.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  /* CARD */
   .card {
     position: relative;
     z-index: 1;
     width: 390px;
     max-width: 95vw;
-    background: rgba(14, 21, 32, 0.92);
+    background: rgba(14, 21, 32, 0.93);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 0 0 32px;
     overflow: hidden;
-    backdrop-filter: blur(20px);
-    animation: cardIn 1s cubic-bezier(0.16,1,0.3,1) forwards;
+    backdrop-filter: blur(24px);
+    animation: cardIn 1.2s cubic-bezier(0.16,1,0.3,1) forwards;
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(32px) scale(0.97);
     box-shadow:
-      0 0 0 1px rgba(78,205,196,0.08),
-      0 40px 80px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(78,205,196,0.06),
+      0 40px 100px rgba(0,0,0,0.8),
       inset 0 1px 0 rgba(255,255,255,0.04);
   }
 
   @keyframes cardIn {
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Banner area */
+  /* BANNER */
   .banner {
     width: 100%;
-    height: 110px;
+    height: 120px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #0d1f2d 0%, #12243a 40%, #0e1a2e 100%);
+    background: linear-gradient(135deg, #0d1f2d 0%, #12243a 50%, #0e1a2e 100%);
   }
 
   .banner-glow {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse at 30% 60%, rgba(78,205,196,0.2) 0%, transparent 50%),
-      radial-gradient(ellipse at 75% 30%, rgba(155,114,207,0.18) 0%, transparent 50%);
+      radial-gradient(ellipse at 25% 70%, rgba(78,205,196,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 25%, rgba(155,114,207,0.2) 0%, transparent 55%);
+    animation: bannerGlowShift 8s ease-in-out infinite;
   }
 
-  /* Floating orbs in banner */
+  @keyframes bannerGlowShift {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
   .orb {
     position: absolute;
     border-radius: 50%;
     animation: orbFloat ease-in-out infinite;
+    filter: blur(1px);
   }
 
   @keyframes orbFloat {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-8px) scale(1.05); }
+    0%   { transform: translateY(0)     scale(1);    opacity: 0.7; }
+    33%  { transform: translateY(-10px) scale(1.08); opacity: 1; }
+    66%  { transform: translateY(-4px)  scale(0.95); opacity: 0.8; }
+    100% { transform: translateY(0)     scale(1);    opacity: 0.7; }
   }
 
-  .banner-stars {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-  }
+  .banner-stars-layer { position: absolute; inset: 0; overflow: hidden; }
 
   .bstar {
     position: absolute;
@@ -117,25 +263,44 @@
   }
 
   @keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.3); }
+    0%, 100% { opacity: 0.15; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
+
+  .banner-aurora {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40px;
+    background: linear-gradient(180deg, transparent, rgba(78,205,196,0.06));
+    animation: auroraWave 6s ease-in-out infinite;
+  }
+
+  @keyframes auroraWave {
+    0%, 100% { opacity: 0.5; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.5); }
   }
 
   .banner-text {
     position: absolute;
-    bottom: 12px; left: 20px;
-    font-size: 0.6rem;
-    letter-spacing: 4px;
-    color: rgba(78,205,196,0.5);
+    bottom: 10px; left: 20px;
+    font-size: 0.58rem;
+    letter-spacing: 5px;
+    color: rgba(78,205,196,0.45);
     font-family: 'Cinzel', serif;
     text-transform: uppercase;
+    animation: bannerTextGlow 4s ease-in-out infinite;
   }
 
-  /* Avatar */
+  @keyframes bannerTextGlow {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.85; text-shadow: 0 0 10px rgba(78,205,196,0.4); }
+  }
+
+  /* AVATAR */
   .avatar-wrapper {
     display: flex;
     justify-content: center;
-    margin-top: -44px;
+    margin-top: -48px;
     margin-bottom: 16px;
     position: relative;
     z-index: 2;
@@ -143,132 +308,118 @@
 
   .avatar-outer {
     position: relative;
-    width: 88px; height: 88px;
+    width: 96px; height: 96px;
   }
 
-  .avatar-hex {
-    width: 88px; height: 88px;
-    position: relative;
-  }
-
-  .avatar-hex::before {
-    content: '';
+  .avatar-ring {
     position: absolute;
-    inset: -2px;
+    inset: -3px;
     border-radius: 50%;
-    background: conic-gradient(var(--teal), var(--purple), var(--teal2), var(--purple), var(--teal));
-    animation: spin 6s linear infinite;
+    background: conic-gradient(
+      var(--teal) 0deg,
+      var(--purple) 90deg,
+      var(--teal2) 180deg,
+      rgba(255,255,255,0.1) 200deg,
+      rgba(255,255,255,0.1) 220deg,
+      var(--purple) 270deg,
+      var(--teal) 360deg
+    );
+    animation: ringSpinFull 4s linear infinite;
   }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ringSpinFull { to { transform: rotate(360deg); } }
 
-  .avatar-hex::after {
-    content: '';
+  .avatar-ring-inner {
     position: absolute;
-    inset: 0px;
+    inset: 1px;
     border-radius: 50%;
     background: var(--panel);
     z-index: 1;
   }
 
-  .avatar-inner {
+  .avatar-img {
     position: absolute;
-    inset: 4px;
+    inset: 5px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #0e1e30, #12243d);
+    overflow: hidden;
     z-index: 2;
+    background: linear-gradient(135deg, #0e1e30, #12243d);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.4rem;
-    overflow: hidden;
   }
 
-  /* Particles around avatar */
+  .avatar-img img { width:100%; height:100%; border-radius:50%; object-fit:cover; }
+
+  .avatar-glow {
+    position: absolute;
+    bottom: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 70px; height: 20px;
+    background: radial-gradient(ellipse, rgba(78,205,196,0.4), transparent 70%);
+    border-radius: 50%;
+    animation: glowPulse 3s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.4; transform: translateX(-50%) scaleX(1); }
+    50% { opacity: 1; transform: translateX(-50%) scaleX(1.4); }
+  }
+
+  /* Partikel orbit */
   .particle {
     position: absolute;
-    width: 4px; height: 4px;
     border-radius: 50%;
-    background: var(--teal);
-    animation: orbit linear infinite;
+    top: 50%; left: 50%;
+    animation: orbitSmooth linear infinite;
     z-index: 3;
   }
 
-  @keyframes orbit {
-    0% { transform: rotate(0deg) translateX(52px) scale(1); opacity: 1; }
-    50% { opacity: 0.3; transform: rotate(180deg) translateX(52px) scale(0.6); }
-    100% { transform: rotate(360deg) translateX(52px) scale(1); opacity: 1; }
+  @keyframes orbitSmooth {
+    0%   { transform: rotate(0deg)   translateX(54px) scale(1);   opacity: 0.9; }
+    25%  { transform: rotate(90deg)  translateX(54px) scale(0.6); opacity: 0.4; }
+    50%  { transform: rotate(180deg) translateX(54px) scale(1);   opacity: 0.9; }
+    75%  { transform: rotate(270deg) translateX(54px) scale(0.6); opacity: 0.4; }
+    100% { transform: rotate(360deg) translateX(54px) scale(1);   opacity: 0.9; }
   }
 
-  /* Username */
-  .info {
-    padding: 0 28px;
-    text-align: center;
-  }
+  /* INFO */
+  .info { padding: 0 28px; text-align: center; }
 
   .username {
     font-family: 'Cinzel', serif;
     font-size: 1.9rem;
     font-weight: 700;
-    color: var(--white);
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     margin-bottom: 4px;
     background: linear-gradient(135deg, var(--teal2), var(--white), var(--purple));
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: gradientShift 6s ease infinite;
   }
 
-  .tag {
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
+  .tag { font-size: 0.65rem; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; }
 
-  .divider {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border));
-  }
-  .divider::after {
-    background: linear-gradient(90deg, var(--border), transparent);
-  }
+  .divider { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .divider::before { content:''; flex:1; height:1px; background: linear-gradient(90deg, transparent, var(--border)); }
+  .divider::after  { content:''; flex:1; height:1px; background: linear-gradient(90deg, var(--border), transparent); }
   .divider-icon { color: var(--teal); font-size: 0.8rem; }
 
-  .desc {
-    font-size: 0.8rem;
-    color: #6a8a9a;
-    line-height: 1.75;
-    margin-bottom: 24px;
-  }
+  .desc { font-size: 0.8rem; color: #6a8a9a; line-height: 1.75; margin-bottom: 24px; }
+  .desc em { color: var(--teal); font-style: normal; }
 
-  .desc em {
-    color: var(--teal);
-    font-style: normal;
-  }
-
-  /* Links */
-  .links {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
+  /* BUTTONS */
+  .links { display: flex; flex-direction: column; gap: 9px; }
 
   .btn {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 13px 18px;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--white);
@@ -277,94 +428,59 @@
     font-size: 0.82rem;
     font-weight: 300;
     letter-spacing: 0.5px;
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
     position: relative;
     overflow: hidden;
     cursor: pointer;
   }
 
-  .btn::after {
+  .btn::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(78,205,196,0.06), transparent);
+    background: linear-gradient(90deg, rgba(78,205,196,0.07), transparent);
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.35s;
   }
 
   .btn:hover {
-    border-color: rgba(78,205,196,0.4);
+    border-color: rgba(78,205,196,0.35);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(78,205,196,0.1), 0 0 0 1px rgba(78,205,196,0.1);
+    box-shadow: 0 8px 28px rgba(78,205,196,0.1);
+    background: rgba(78,205,196,0.03);
   }
+  .btn:hover::before { opacity: 1; }
 
-  .btn:hover::after { opacity: 1; }
+  .btn-yt:hover { border-color: rgba(255,80,80,0.35); box-shadow: 0 8px 28px rgba(255,80,80,0.1); }
+  .btn-yt::before { background: linear-gradient(90deg, rgba(255,80,80,0.07), transparent); }
 
-  .btn-yt:hover {
-    border-color: rgba(255,80,80,0.4);
-    box-shadow: 0 8px 24px rgba(255,80,80,0.1), 0 0 0 1px rgba(255,80,80,0.1);
-  }
-  .btn-yt::after {
-    background: linear-gradient(90deg, rgba(255,80,80,0.06), transparent);
-  }
+  .btn-donate:hover { border-color: rgba(255,140,0,0.35); box-shadow: 0 8px 28px rgba(255,140,0,0.08); }
+  .btn-donate::before { background: linear-gradient(90deg, rgba(255,140,0,0.07), transparent); }
 
-  .btn-icon {
-    width: 28px; height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    flex-shrink: 0;
-    font-size: 1rem;
-  }
+  .btn-icon { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:6px; flex-shrink:0; }
+  .icon-tiktok  { background: rgba(255,255,255,0.06); }
+  .icon-yt      { background: rgba(255,80,80,0.12); }
+  .icon-discord { background: rgba(88,101,242,0.12); }
+  .icon-donate  { background: rgba(255,140,0,0.1); }
 
-  .icon-tiktok { background: rgba(255,255,255,0.06); }
-  .icon-yt { background: rgba(255,80,80,0.12); }
+  .btn-label { flex:1; text-align:left; }
+  .btn-name  { display:block; font-weight:400; }
+  .btn-sub   { display:block; font-size:0.65rem; color:var(--muted); letter-spacing:1px; margin-top:1px; }
 
-  .btn-label { flex: 1; }
-  .btn-name { display: block; font-weight: 400; }
-  .btn-sub { display: block; font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; margin-top: 1px; }
+  .btn-arrow { font-size:0.7rem; color:var(--muted); transition:all 0.35s; flex-shrink:0; }
+  .btn:hover .btn-arrow { transform: translateX(5px); color: var(--teal); }
 
-  .btn-arrow {
-    font-size: 0.7rem;
-    color: var(--muted);
-    transition: all 0.3s;
-  }
-  .btn:hover .btn-arrow { transform: translateX(4px); color: var(--teal); }
-
-  .btn-donate:hover {
-    border-color: rgba(255,140,0,0.35);
-    box-shadow: 0 8px 24px rgba(255,140,0,0.08);
-  }
-
-  /* Footer */
-  .footer {
-    text-align: center;
-    margin-top: 26px;
-    font-size: 0.6rem;
-    color: #2a3d4d;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .footer-glow {
-    color: rgba(78,205,196,0.25);
-    font-size: 0.65rem;
-    margin-bottom: 4px;
-  }
-
-  /* Music Player */
+  /* MUSIC PLAYER */
   .music-player {
     margin-top: 18px;
-    background: rgba(78,205,196,0.04);
-    border: 1px solid rgba(78,205,196,0.12);
+    background: rgba(78,205,196,0.03);
+    border: 1px solid rgba(78,205,196,0.1);
     border-radius: 10px;
     padding: 12px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
 
   .music-play-btn {
     width: 34px; height: 34px;
@@ -376,232 +492,46 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.2s;
+    transition: all 0.25s;
     color: white;
     font-size: 0.75rem;
-    box-shadow: 0 0 12px rgba(78,205,196,0.3);
+    box-shadow: 0 0 14px rgba(78,205,196,0.25);
   }
+  .music-play-btn:hover { transform: scale(1.12); box-shadow: 0 0 24px rgba(78,205,196,0.5); }
 
-  .music-play-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(78,205,196,0.5); }
+  .music-info { flex:1; min-width:0; }
 
-  .music-info { flex: 1; min-width: 0; }
+  .music-title { font-size:0.68rem; color:var(--teal2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:5px; font-family:'Cinzel',serif; letter-spacing:1px; }
 
-  .music-title {
-    font-size: 0.68rem;
-    color: var(--teal2);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 5px;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 1px;
-  }
+  .music-bar { height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; cursor:pointer; }
+  .music-progress { height:100%; background:linear-gradient(90deg,var(--teal),var(--purple)); border-radius:2px; width:0%; transition:width 0.5s linear; }
+  .music-time { font-size:0.55rem; color:var(--muted); margin-top:3px; letter-spacing:1px; }
 
-  .music-bar {
-    height: 3px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-    cursor: pointer;
-  }
+  .eq { display:flex; align-items:flex-end; gap:2px; height:14px; flex-shrink:0; }
+  .eq-bar { width:3px; background:linear-gradient(to top,var(--teal),var(--purple)); border-radius:1px; height:3px; opacity:0.3; }
+  .eq-bar.playing { opacity:1; animation: eqBounce ease-in-out infinite; }
 
-  .music-progress {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--purple));
-    border-radius: 2px;
-    width: 0%;
-    transition: width 0.5s linear;
-  }
-
-  .music-time {
-    font-size: 0.55rem;
-    color: var(--muted);
-    margin-top: 3px;
-    letter-spacing: 1px;
-  }
-
-  .eq {
-    display: flex;
-    align-items: flex-end;
-    gap: 2px;
-    height: 14px;
-    flex-shrink: 0;
-  }
-
-  .eq-bar {
-    width: 3px;
-    background: var(--teal);
-    border-radius: 1px;
-    animation: eqAnim ease-in-out infinite;
-    opacity: 0.3;
-  }
-
-  .eq-bar.playing { opacity: 1; }
-
-  @keyframes eqAnim {
+  @keyframes eqBounce {
     0%, 100% { height: 3px; }
     50% { height: 14px; }
   }
 
-  .music-vol {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
-  }
+  .music-vol { display:flex; align-items:center; gap:5px; flex-shrink:0; }
+  .vol-icon { font-size:0.7rem; color:var(--muted); }
+  .vol-slider { -webkit-appearance:none; width:46px; height:3px; background:rgba(255,255,255,0.08); border-radius:2px; outline:none; }
+  .vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:10px; height:10px; border-radius:50%; background:var(--teal); cursor:pointer; box-shadow:0 0 6px rgba(78,205,196,0.5); }
 
-  .vol-icon { font-size: 0.7rem; color: var(--muted); }
-
-  .vol-slider {
-    -webkit-appearance: none;
-    width: 46px;
-    height: 3px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 2px;
-    outline: none;
-  }
-
-  .vol-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--teal);
-    cursor: pointer;
-  }
-
-  /* Splash Screen */
-  .splash {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-    background: #0a0f14;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: opacity 1s ease, visibility 1s ease;
-    overflow: hidden;
-  }
-
-  .splash::before {
-    content: '';
-    position: absolute;
-    top: 40%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px; height: 500px;
-    background: radial-gradient(ellipse, rgba(78,205,196,0.08) 0%, rgba(155,114,207,0.06) 40%, transparent 70%);
-    animation: splashPulse 3s ease-in-out infinite;
-  }
-
-  @keyframes splashPulse {
-    0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
-    50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; }
-  }
-
-  .splash.hide {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  .splash-moon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    animation: moonFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 30px rgba(78,205,196,0.4));
-    position: relative;
-    z-index: 1;
-  }
-
-  @keyframes moonFloat {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-15px) rotate(5deg); }
-  }
-
-  .splash-name {
-    font-family: 'Cinzel', serif;
-    font-size: 2.8rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #4ecdc4, #e8f4f8, #9b72cf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 4px;
-    margin-bottom: 8px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .splash-sub {
-    font-size: 0.62rem;
-    color: #3a5a6a;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    margin-bottom: 50px;
-    font-family: 'Lato', sans-serif;
-    position: relative;
-    z-index: 1;
-  }
-
-  .splash-btn {
-    position: relative;
-    z-index: 1;
-    padding: 14px 44px;
-    background: transparent;
-    border: 1px solid rgba(78,205,196,0.5);
-    color: #4ecdc4;
-    font-family: 'Cinzel', serif;
-    font-size: 0.75rem;
-    letter-spacing: 3px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.3s;
-    box-shadow: 0 0 20px rgba(78,205,196,0.1);
-  }
-
-  .splash-btn:hover {
-    background: rgba(78,205,196,0.1);
-    box-shadow: 0 0 30px rgba(78,205,196,0.3);
-    border-color: rgba(78,205,196,0.8);
-  }
-
-  .splash-hint {
-    margin-top: 16px;
-    font-size: 0.55rem;
-    color: #2a3d4d;
-    letter-spacing: 2px;
-    font-family: 'Lato', sans-serif;
-    position: relative;
-    z-index: 1;
-    animation: blink 2s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
-
-  .splash-stars {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .splash-star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle ease-in-out infinite;
-  }
-
+  /* FOOTER */
+  .footer { text-align:center; margin-top:26px; font-size:0.6rem; color:#2a3d4d; letter-spacing:2px; text-transform:uppercase; }
+  .footer-glow { color:rgba(78,205,196,0.2); font-size:0.65rem; margin-bottom:4px; animation:footerGlowPulse 4s ease-in-out infinite; }
+  @keyframes footerGlowPulse { 0%,100%{opacity:0.5} 50%{opacity:1;color:rgba(78,205,196,0.4)} }
 </style>
 </head>
 <body>
 
-
 <div class="splash" id="splash" onclick="enterSite()">
-  <div class="splash-stars" id="splashStars"></div>
+  <div class="splash-glow"></div>
+  <canvas id="splashCanvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;width:100%;height:100%;"></canvas>
   <div class="splash-moon">🌙</div>
   <div class="splash-name">Vaelhae</div>
   <div class="splash-sub">✦ enter the realm ✦</div>
@@ -609,36 +539,37 @@
   <div class="splash-hint">klik di mana saja untuk masuk</div>
 </div>
 
-<canvas id="stars"></canvas>
+<canvas id="bgCanvas"></canvas>
 
 <div class="card">
   <div class="banner">
     <div class="banner-glow"></div>
-    <div class="banner-stars" id="bannerStars"></div>
-    <!-- Orbs -->
-    <div class="orb" style="width:60px;height:60px;background:radial-gradient(circle,rgba(78,205,196,0.25),transparent);top:-10px;left:40px;animation-duration:5s;"></div>
-    <div class="orb" style="width:80px;height:80px;background:radial-gradient(circle,rgba(155,114,207,0.2),transparent);top:10px;right:20px;animation-duration:7s;animation-delay:1s;"></div>
-    <div class="orb" style="width:40px;height:40px;background:radial-gradient(circle,rgba(240,192,96,0.15),transparent);bottom:-5px;left:55%;animation-duration:6s;animation-delay:2s;"></div>
+    <div class="banner-stars-layer" id="bannerStars"></div>
+    <div class="orb" style="width:70px;height:70px;background:radial-gradient(circle,rgba(78,205,196,0.3),transparent);top:-15px;left:30px;animation-duration:5s;"></div>
+    <div class="orb" style="width:90px;height:90px;background:radial-gradient(circle,rgba(155,114,207,0.25),transparent);top:5px;right:15px;animation-duration:7s;animation-delay:-2s;"></div>
+    <div class="orb" style="width:50px;height:50px;background:radial-gradient(circle,rgba(240,192,96,0.2),transparent);bottom:-10px;left:50%;animation-duration:6s;animation-delay:-1s;"></div>
+    <div class="banner-aurora"></div>
     <div class="banner-text">✦ the realm of vaelhae ✦</div>
   </div>
 
   <div class="avatar-wrapper">
     <div class="avatar-outer">
-      <div class="avatar-hex">
-        <div class="avatar-inner"><img src="https://i.ibb.co.com/B2TFBZb1/CHIBI-1.jpg" alt="Vaelhae" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"></div>
+      <div class="avatar-ring"></div>
+      <div class="avatar-ring-inner"></div>
+      <div class="avatar-img">
+        <img src="https://i.ibb.co.com/B2TFBZb1/CHIBI-1.jpg" alt="Vaelhae">
       </div>
-      <div class="particle" style="animation-duration:4s; background:var(--teal);"></div>
-      <div class="particle" style="animation-duration:4s; animation-delay:-1.3s; background:var(--purple);"></div>
-      <div class="particle" style="animation-duration:4s; animation-delay:-2.7s; background:var(--teal2); width:3px; height:3px;"></div>
+      <div class="avatar-glow"></div>
+      <div class="particle" style="width:5px;height:5px;background:var(--teal);animation-duration:3.5s;margin:-2.5px 0 0 -2.5px;box-shadow:0 0 6px var(--teal);"></div>
+      <div class="particle" style="width:4px;height:4px;background:var(--purple);animation-duration:3.5s;animation-delay:-1.17s;margin:-2px 0 0 -2px;box-shadow:0 0 6px var(--purple);"></div>
+      <div class="particle" style="width:3px;height:3px;background:var(--teal2);animation-duration:3.5s;animation-delay:-2.33s;margin:-1.5px 0 0 -1.5px;box-shadow:0 0 4px var(--teal2);"></div>
     </div>
   </div>
 
   <div class="info">
     <div class="username">Vaelhae</div>
     <div class="tag">✦ streamer · dreamer ✦</div>
-
     <div class="divider"><span class="divider-icon">◆</span></div>
-
     <div class="desc">
       selamat datang di dunia Vaelhae —<br>
       tempat cerita malam dan layar menyatu.<br>
@@ -646,62 +577,32 @@
     </div>
 
     <div class="links">
+        <a href="https://bagibagi.co/vaelhae" class="btn btn-donate">
+            <span class="btn-icon icon-donate"><img src="https://cdn.simpleicons.org/kofi/ff5e5b" alt="Donate" style="width:17px;height:17px;object-fit:contain;"></span>
+            <span class="btn-label"><span class="btn-name">Donate</span><span class="btn-sub">BagiBagi ☕</span></span>
+            <span class="btn-arrow">→</span>
+          </a>
       <a href="https://tiktok.com/@vaelhae" class="btn">
-        <span class="btn-icon icon-tiktok">
-          <img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" style="width:16px;height:16px;object-fit:contain;">
-        </span>
-        <span class="btn-label">
-          <span class="btn-name">TikTok</span>
-          <span class="btn-sub">@vaelhae</span>
-        </span>
+        <span class="btn-icon icon-tiktok"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" style="width:16px;height:16px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">TikTok</span><span class="btn-sub">@vaelhae</span></span>
         <span class="btn-arrow">→</span>
       </a>
-
       <a href="https://youtube.com/@vaelhae" class="btn btn-yt">
-        <span class="btn-icon icon-yt">
-          <img src="https://cdn.simpleicons.org/youtube/ff0000" alt="YouTube" style="width:17px;height:17px;object-fit:contain;">
-        </span>
-        <span class="btn-label">
-          <span class="btn-name">YouTube</span>
-          <span class="btn-sub">Vaelhae</span>
-        </span>
+        <span class="btn-icon icon-yt"><img src="https://cdn.simpleicons.org/youtube/ff0000" alt="YouTube" style="width:17px;height:17px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">YouTube</span><span class="btn-sub">Vaelhae</span></span>
         <span class="btn-arrow">→</span>
       </a>
-
-      <a href="https://discord.gg/Gc8mhCyjHb" class="btn btn-discord">
-        <span class="btn-icon icon-discord">
-          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:17px;height:17px;object-fit:contain;">
-        </span>
-        <span class="btn-label">
-          <span class="btn-name">🌙Ruang Tengah Malam (Merenung)</span>
-          <span class="btn-sub">Discord Server - Free To Join</span>
-        </span>
+      <a href="https://discord.gg/Gc8mhCyjHb" class="btn">
+        <span class="btn-icon icon-discord"><img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:17px;height:17px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">🌙 Ruang Tengah Malam</span><span class="btn-sub">Discord Server · Free To Join</span></span>
         <span class="btn-arrow">→</span>
       </a>
-
-      <a href="https://discord.gg/E3eUvkqCPB" class="btn btn-discord">
-        <span class="btn-icon icon-discord">
-          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:17px;height:17px;object-fit:contain;">
-        </span>
-        <span class="btn-label">
-          <span class="btn-name">🌿The Canopy (Hub)</span>
-          <span class="btn-sub">Discord Server - Free To Join</span>
-        </span>
-        <span class="btn-arrow">→</span>
-      </a>
-
-      <a href="https://bagibagi.co/vaelhae" class="btn btn-donate">
-        <span class="btn-icon icon-donate">
-          <img src="https://cdn.simpleicons.org/bitcoin/ff8b1f" alt="BagiBagi" style="width:17px;height:17px;object-fit:contain;">
-        </span>
-        <span class="btn-label">
-          <span class="btn-name">Donate</span>
-          <span class="btn-sub">BagiBagi</span>
-        </span>
+      <a href="https://discord.gg/E3eUvkqCPB" class="btn">
+        <span class="btn-icon icon-discord"><img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:17px;height:17px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">🌿 The Canopy (Hub)</span><span class="btn-sub">Discord Server · Free To Join</span></span>
         <span class="btn-arrow">→</span>
       </a>
     </div>
-
 
     <div class="music-player">
       <button class="music-play-btn" id="playBtn" onclick="togglePlay()">▶</button>
@@ -713,10 +614,10 @@
         <div class="music-time" id="timeDisplay">0:00 / 0:00</div>
       </div>
       <div class="eq">
-        <div class="eq-bar" style="animation-duration:0.7s;height:4px;"></div>
-        <div class="eq-bar" style="animation-duration:0.5s;animation-delay:0.15s;height:4px;"></div>
-        <div class="eq-bar" style="animation-duration:0.6s;animation-delay:0.05s;height:4px;"></div>
-        <div class="eq-bar" style="animation-duration:0.8s;animation-delay:0.1s;height:4px;"></div>
+        <div class="eq-bar" style="animation-duration:0.7s;"></div>
+        <div class="eq-bar" style="animation-duration:0.5s;animation-delay:0.15s;"></div>
+        <div class="eq-bar" style="animation-duration:0.6s;animation-delay:0.05s;"></div>
+        <div class="eq-bar" style="animation-duration:0.8s;animation-delay:0.1s;"></div>
       </div>
       <div class="music-vol">
         <span class="vol-icon">🔊</span>
@@ -724,9 +625,9 @@
       </div>
     </div>
 
-    <audio id="bgAudio" loop autoplay>
-    <source src="https://raw.githubusercontent.com/VaelHae/Backsound/refs/heads/main/Death%20Bed%20(Instrumental)%20-%20Powfu%20(feat.%20beabadoobee).mp3" type="audio/mpeg">
-  </audio>
+    <audio id="bgAudio" loop>
+      <source src="https://raw.githubusercontent.com/VaelHae/Backsound/refs/heads/main/Death%20Bed%20(Instrumental)%20-%20Powfu%20(feat.%20beabadoobee).mp3" type="audio/mpeg">
+    </audio>
 
     <div class="footer">
       <div class="footer-glow">· · · ✦ · · ·</div>
@@ -736,127 +637,160 @@
 </div>
 
 <script>
+// SPLASH CANVAS — bintang + shooting stars
+const splashCanvas = document.getElementById('splashCanvas');
+const sCtx = splashCanvas.getContext('2d');
 
+function resizeSplash() {
+  splashCanvas.width = window.innerWidth;
+  splashCanvas.height = window.innerHeight;
+}
+resizeSplash();
 
-  // Music player
-  const audio = document.getElementById('bgAudio');
-  audio.volume = 0.5;
-  let playing = false;
+const splashStars = Array.from({length: 200}, () => ({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight,
+  r: Math.random() * 1.4,
+  alpha: Math.random(),
+  dir: Math.random() > 0.5 ? 1 : -1,
+  speed: 0.004 + Math.random() * 0.008
+}));
 
-  // Try autoplay
-  window.addEventListener('load', () => {
-    audio.play().then(() => {
-      playing = true;
-      document.getElementById('playBtn').textContent = '⏸';
-      document.querySelectorAll('.eq-bar').forEach(b => b.classList.add('playing'));
-    }).catch(() => {
-      // Autoplay blocked, wait for user click
-    });
-  });
-
-  function togglePlay() {
-    if (playing) {
-      audio.pause();
-      document.getElementById('playBtn').textContent = '▶';
-      document.querySelectorAll('.eq-bar').forEach(b => b.classList.remove('playing'));
-    } else {
-      audio.play();
-      document.getElementById('playBtn').textContent = '⏸';
-      document.querySelectorAll('.eq-bar').forEach(b => b.classList.add('playing'));
-    }
-    playing = !playing;
-  }
-
-  function setVolume(v) { audio.volume = parseFloat(v); }
-
-  function formatTime(s) {
-    if (isNaN(s)) return '0:00';
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return m + ':' + (sec < 10 ? '0' : '') + sec;
-  }
-
-  audio.addEventListener('timeupdate', () => {
-    if (!audio.duration) return;
-    const pct = (audio.currentTime / audio.duration) * 100;
-    const prog = document.getElementById('progress');
-    if (prog) prog.style.width = pct + '%';
-    const disp = document.getElementById('timeDisplay');
-    if (disp) disp.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
-  });
-
-  function seekTo(e, el) {
-    const rect = el.getBoundingClientRect();
-    audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
-  }
-
-
-  // Splash stars
-  const splashStarsEl = document.getElementById('splashStars');
-  for (let i = 0; i < 60; i++) {
-    const s = document.createElement('div');
-    s.className = 'splash-star';
-    const size = 1 + Math.random() * 2;
-    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*3}s;`;
-    splashStarsEl.appendChild(s);
-  }
-
-  function enterSite() {
-    document.getElementById('splash').classList.add('hide');
-    const audio = document.getElementById('bgAudio');
-    audio.play().then(() => {
-      playing = true;
-      document.getElementById('playBtn').textContent = '⏸';
-      document.querySelectorAll('.eq-bar').forEach(b => b.classList.add('playing'));
-    }).catch(e => console.log(e));
-  }
-
-// Starfield canvas
-const canvas = document.getElementById('stars');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const stars = [];
-for (let i = 0; i < 120; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 1.2,
-    speed: 0.1 + Math.random() * 0.3,
-    alpha: Math.random(),
-    alphaDir: Math.random() > 0.5 ? 1 : -1
+const shoots = [];
+function spawnShoot() {
+  shoots.push({
+    x: Math.random() * window.innerWidth * 0.7,
+    y: Math.random() * window.innerHeight * 0.45,
+    len: 90 + Math.random() * 130,
+    speed: 7 + Math.random() * 7,
+    progress: 0,
+    angle: Math.PI / 5 + (Math.random() - 0.5) * 0.3
   });
 }
+setInterval(spawnShoot, 2000);
+spawnShoot();
 
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(s => {
-    s.alpha += s.alphaDir * 0.005;
-    if (s.alpha > 1 || s.alpha < 0.1) s.alphaDir *= -1;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(200,220,255,${s.alpha * 0.5})`;
-    ctx.fill();
+function drawSplash() {
+  sCtx.clearRect(0, 0, splashCanvas.width, splashCanvas.height);
+  splashStars.forEach(s => {
+    s.alpha += s.dir * s.speed;
+    if (s.alpha > 1 || s.alpha < 0.05) s.dir *= -1;
+    sCtx.beginPath();
+    sCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    sCtx.fillStyle = `rgba(180,220,255,${s.alpha * 0.6})`;
+    sCtx.fill();
   });
-  requestAnimationFrame(drawStars);
+  for (let i = shoots.length - 1; i >= 0; i--) {
+    const ss = shoots[i];
+    ss.progress += ss.speed;
+    const fade = Math.max(0, 1 - ss.progress / ss.len);
+    const x2 = ss.x + ss.progress * Math.cos(ss.angle);
+    const y2 = ss.y + ss.progress * Math.sin(ss.angle);
+    const x1 = ss.x + Math.max(0, ss.progress - 90) * Math.cos(ss.angle);
+    const y1 = ss.y + Math.max(0, ss.progress - 90) * Math.sin(ss.angle);
+    const g = sCtx.createLinearGradient(x1, y1, x2, y2);
+    g.addColorStop(0, `rgba(78,205,196,0)`);
+    g.addColorStop(1, `rgba(155,200,255,${fade * 0.9})`);
+    sCtx.beginPath();
+    sCtx.strokeStyle = g;
+    sCtx.lineWidth = 1.5;
+    sCtx.moveTo(x1, y1); sCtx.lineTo(x2, y2);
+    sCtx.stroke();
+    if (ss.progress > ss.len + 90) shoots.splice(i, 1);
+  }
+  requestAnimationFrame(drawSplash);
 }
-drawStars();
+drawSplash();
 
-// Banner mini stars
-const bannerStars = document.getElementById('bannerStars');
-for (let i = 0; i < 30; i++) {
+// BG CANVAS — starfield
+const bgCanvas = document.getElementById('bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
+resizeBg();
+window.addEventListener('resize', () => { resizeSplash(); resizeBg(); });
+
+const bgStars = Array.from({length: 150}, () => ({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight,
+  r: Math.random() * 1.2,
+  alpha: Math.random(),
+  dir: Math.random() > 0.5 ? 1 : -1,
+  speed: 0.003 + Math.random() * 0.006
+}));
+
+function drawBg() {
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  bgStars.forEach(s => {
+    s.alpha += s.dir * s.speed;
+    if (s.alpha > 1 || s.alpha < 0.05) s.dir *= -1;
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(180,220,255,${s.alpha * 0.45})`;
+    bgCtx.fill();
+  });
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// BANNER STARS
+const bannerStarsEl = document.getElementById('bannerStars');
+for (let i = 0; i < 35; i++) {
   const s = document.createElement('div');
   s.className = 'bstar';
-  const size = 1 + Math.random() * 1.5;
-  s.style.cssText = `
-    width:${size}px;height:${size}px;
-    left:${Math.random()*100}%;
-    top:${Math.random()*100}%;
-    animation-duration:${2+Math.random()*3}s;
-    animation-delay:${Math.random()*3}s;
-  `;
-  bannerStars.appendChild(s);
+  const sz = 1 + Math.random() * 1.8;
+  s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.5+Math.random()*3}s;animation-delay:${Math.random()*3}s;`;
+  bannerStarsEl.appendChild(s);
+}
+
+// MUSIC PLAYER
+const audio = document.getElementById('bgAudio');
+audio.volume = 0.5;
+let playing = false;
+
+function togglePlay() {
+  if (playing) {
+    audio.pause();
+    document.getElementById('playBtn').textContent = '▶';
+    document.querySelectorAll('.eq-bar').forEach(b => b.classList.remove('playing'));
+  } else {
+    audio.play();
+    document.getElementById('playBtn').textContent = '⏸';
+    document.querySelectorAll('.eq-bar').forEach(b => b.classList.add('playing'));
+  }
+  playing = !playing;
+}
+
+function setVolume(v) { audio.volume = parseFloat(v); }
+
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  const prog = document.getElementById('progress');
+  if (prog) prog.style.width = pct + '%';
+  const disp = document.getElementById('timeDisplay');
+  if (disp) disp.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+});
+
+function seekTo(e, el) {
+  const rect = el.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+}
+
+// SPLASH ENTER
+function enterSite() {
+  document.getElementById('splash').classList.add('hide');
+  audio.play().then(() => {
+    playing = true;
+    document.getElementById('playBtn').textContent = '⏸';
+    document.querySelectorAll('.eq-bar').forEach(b => b.classList.add('playing'));
+  }).catch(e => console.log(e));
 }
 </script>
 </body>
