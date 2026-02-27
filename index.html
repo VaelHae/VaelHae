@@ -3,29 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vaelhae</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Reihaku Shiranui</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+JP:wght@300;400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:     #06101a;
-    --panel:  #0c1825;
-    --border: #1e3d5c;
-    --b1:     #1a6fa8;
-    --b2:     #4a9fd4;
-    --b3:     #8ac8e8;
     --ice:    #c2e0f4;
+    --ice2:   #8ec8e8;
     --frost:  #e8f4ff;
-    --white:  #f5f9ff;
-    --muted:  #2a4a65;
-    --dim:    #163050;
+    --void:   #04090f;
+    --deep:   #060e1a;
+    --panel:  #08121e;
+    --border: #152840;
+    --ember:  #e8903a;
+    --ember2: #f0b060;
+    --muted:  #3a6080;
+    --dim:    #1a3a55;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
 
+  /* Custom cursor */
+  body { cursor: none; }
+  #cursor {
+    position:fixed; pointer-events:none; z-index:9999;
+    width:20px; height:20px;
+    transform:translate(-50%,-50%);
+    transition:transform 0.1s;
+  }
+  #cursor svg { width:100%; height:100%; animation:cursorSpin 8s linear infinite; }
+  @keyframes cursorSpin{to{transform:rotate(360deg)}}
+  #cursor-trail {
+    position:fixed; pointer-events:none; z-index:9998;
+    width:6px; height:6px; border-radius:50%;
+    background:rgba(194,224,244,0.4);
+    transform:translate(-50%,-50%);
+    transition:left 0.15s ease, top 0.15s ease;
+    box-shadow:0 0 6px rgba(194,224,244,0.3);
+  }
+
   body {
     min-height:100vh;
-    background:var(--bg);
-    font-family:'Inter', sans-serif;
+    background:var(--void);
+    font-family:'IM Fell English', serif;
     overflow-y:auto; overflow-x:hidden;
     padding:40px 16px;
   }
@@ -36,405 +55,1007 @@
     position:relative; z-index:2;
   }
 
-  /* BG subtle glow */
-  #bgCanvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
-  #snowCanvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
+  /* Fixed canvases */
+  #bgCanvas    { position:fixed; inset:0; z-index:0; pointer-events:none; }
+  #snowCanvas  { position:fixed; inset:0; z-index:1; pointer-events:none; }
+  #emberCanvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
 
-  body::before {
-    content:'';
-    position:fixed; inset:0; z-index:0;
-    background:radial-gradient(ellipse at 50% 0%, rgba(74,159,212,0.06) 0%, transparent 65%);
-    pointer-events:none;
+  /* Aurora bg */
+  .bg-aurora {
+    position:fixed; top:0; left:0; right:0; height:60vh;
+    z-index:0; pointer-events:none;
+    filter:blur(30px);
+  }
+  /* Light ray 1 */
+  .bg-aurora::before {
+    content:''; position:absolute; top:0; left:20%; width:18%; height:100%;
+    background:linear-gradient(180deg,
+      rgba(194,224,244,0.07) 0%,
+      rgba(194,224,244,0.04) 40%,
+      transparent 100%
+    );
+    transform-origin:top center;
+    animation:lightRay1 13s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  /* Light ray 2 */
+  .bg-aurora::after {
+    content:''; position:absolute; top:0; left:55%; width:22%; height:100%;
+    background:linear-gradient(180deg,
+      rgba(142,200,232,0.05) 0%,
+      rgba(194,224,244,0.035) 40%,
+      transparent 100%
+    );
+    transform-origin:top center;
+    animation:lightRay2 17s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  @keyframes lightRay1 {
+    0%   { transform:skewX(-8deg)  scaleX(0.8); opacity:0.4; }
+    25%  { transform:skewX(3deg)   scaleX(1.3); opacity:0.9; }
+    55%  { transform:skewX(-5deg)  scaleX(1.0); opacity:0.6; }
+    80%  { transform:skewX(6deg)   scaleX(1.4); opacity:1.0; }
+    100% { transform:skewX(-8deg)  scaleX(0.8); opacity:0.4; }
+  }
+  @keyframes lightRay2 {
+    0%   { transform:skewX(6deg)   scaleX(1.2); opacity:0.5; }
+    35%  { transform:skewX(-4deg)  scaleX(0.9); opacity:0.9; }
+    65%  { transform:skewX(8deg)   scaleX(1.5); opacity:0.6; }
+    100% { transform:skewX(6deg)   scaleX(1.2); opacity:0.5; }
   }
 
-  /* ══ SPLASH ══════════════════════════════════ */
+  /* ══════════════════════════════════════════
+     SPLASH
+  ══════════════════════════════════════════ */
   .splash {
     position:fixed; inset:0; z-index:999;
-    background:#060f1a;
+    background:radial-gradient(ellipse at 50% 35%, #06101c 0%, #030810 70%, #020609 100%);
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    cursor:pointer;
-    transition:opacity 1.2s ease, visibility 1.2s;
+    cursor:none;
+    transition:opacity 1.6s cubic-bezier(0.4,0,0.2,1), visibility 1.6s;
     overflow:hidden;
   }
   .splash.hide { opacity:0; visibility:hidden; pointer-events:none; }
 
   #splashCanvas { position:absolute; inset:0; pointer-events:none; }
 
-  .splash-snowline {
-    position:absolute; bottom:0; left:0; right:0; height:80px;
-    background:linear-gradient(180deg, transparent 0%, rgba(168,216,240,0.03) 100%);
-    pointer-events:none;
+  /* Aurora curtain — organic fluid bands */
+  .splash-aurora-band {
+    position:absolute; left:-10%; right:-10%;
+    pointer-events:none; z-index:1;
+    transform-origin:center;
+    filter:blur(18px);
+  }
+  .splash-aurora-band:nth-child(1) {
+    top:2%; height:22%;
+    background:linear-gradient(180deg,
+      transparent 0%,
+      rgba(194,224,244,0.0) 10%,
+      rgba(194,224,244,0.09) 40%,
+      rgba(142,200,232,0.06) 70%,
+      transparent 100%
+    );
+    animation:auroraWave1 11s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  .splash-aurora-band:nth-child(2) {
+    top:8%; height:18%;
+    background:linear-gradient(180deg,
+      transparent 0%,
+      rgba(142,200,232,0.07) 30%,
+      rgba(194,224,244,0.05) 55%,
+      rgba(232,144,58,0.015) 75%,
+      transparent 100%
+    );
+    animation:auroraWave2 14s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  .splash-aurora-band:nth-child(3) {
+    top:16%; height:12%;
+    background:linear-gradient(180deg,
+      transparent,
+      rgba(194,224,244,0.05) 50%,
+      transparent
+    );
+    animation:auroraWave3 8s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  @keyframes auroraWave1 {
+    0%   { transform:translateX(-6%) skewY(-0.4deg) scaleY(0.85); opacity:0.4; }
+    25%  { transform:translateX(2%)  skewY(0.6deg)  scaleY(1.1);  opacity:0.9; }
+    50%  { transform:translateX(7%)  skewY(-0.2deg) scaleY(0.95); opacity:0.7; }
+    75%  { transform:translateX(-2%) skewY(0.4deg)  scaleY(1.05); opacity:1;   }
+    100% { transform:translateX(-6%) skewY(-0.4deg) scaleY(0.85); opacity:0.4; }
+  }
+  @keyframes auroraWave2 {
+    0%   { transform:translateX(5%)  skewY(0.3deg)  scaleY(1.1);  opacity:0.35; }
+    30%  { transform:translateX(-4%) skewY(-0.5deg) scaleY(0.88); opacity:0.75; }
+    60%  { transform:translateX(-8%) skewY(0.6deg)  scaleY(1.15); opacity:0.5;  }
+    80%  { transform:translateX(3%)  skewY(-0.2deg) scaleY(0.92); opacity:0.9;  }
+    100% { transform:translateX(5%)  skewY(0.3deg)  scaleY(1.1);  opacity:0.35; }
+  }
+  @keyframes auroraWave3 {
+    0%   { transform:translateX(-3%) scaleY(0.7);  opacity:0.2; }
+    40%  { transform:translateX(5%)  scaleY(1.2);  opacity:0.8; }
+    70%  { transform:translateX(-6%) scaleY(0.9);  opacity:0.5; }
+    100% { transform:translateX(-3%) scaleY(0.7);  opacity:0.2; }
   }
 
-  .splash-icon {
-    font-size:3rem; margin-bottom:20px;
-    position:relative; z-index:1;
-    animation:iconFloat 3.5s ease-in-out infinite;
-    filter:drop-shadow(0 0 24px rgba(168,216,240,0.4));
+  /* Ice hexagon deco */
+  .hex-ring {
+    position:absolute; z-index:2;
+    pointer-events:none;
+    animation:hexFloat ease-in-out infinite;
   }
-  @keyframes iconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  @keyframes hexFloat{
+    0%,100%{transform:translateY(0) rotate(0deg);opacity:0.15}
+    50%{transform:translateY(-20px) rotate(30deg);opacity:0.35}
+  }
+
+  /* Snow ground fade */
+  .splash-ground {
+    position:absolute; bottom:0; left:0; right:0;
+    height:140px; pointer-events:none; z-index:2;
+    background:linear-gradient(180deg, transparent 0%, rgba(194,224,244,0.03) 60%, rgba(194,224,244,0.07) 100%);
+  }
+
+  /* Splash content */
+  .splash-content {
+    position:relative; z-index:3;
+    display:flex; flex-direction:column; align-items:center;
+    animation:splashContentIn 1.2s cubic-bezier(0.16,1,0.3,1) forwards;
+    opacity:0;
+  }
+  @keyframes splashContentIn{to{opacity:1}}
+
+  .splash-kanji {
+    font-family:'Noto Serif JP', serif;
+    font-size:0.85rem; letter-spacing:18px;
+    color:rgba(194,224,244,0.18);
+    margin-bottom:20px;
+    animation:kanjiReveal 3s ease forwards 1.2s;
+    opacity:0;
+  }
+  @keyframes kanjiReveal{
+    0%{opacity:0;letter-spacing:30px}
+    100%{opacity:1;letter-spacing:18px}
+  }
 
   .splash-name {
     font-family:'Cinzel', serif;
-    font-size:3rem; font-weight:600;
-    position:relative; z-index:1;
-    letter-spacing:10px; margin-bottom:8px;
-    color:#e8f4ff;
-    text-shadow:0 0 40px rgba(194,224,244,0.5), 0 0 80px rgba(74,159,212,0.2);
-    animation:nameBreath 4s ease-in-out infinite;
+    font-size:clamp(2.4rem,8vw,3.2rem); font-weight:600;
+    color:var(--frost);
+    letter-spacing:12px;
+    text-shadow:
+      0 0 30px rgba(194,224,244,0.5),
+      0 0 80px rgba(194,224,244,0.15),
+      0 0 120px rgba(194,224,244,0.08);
+    margin-bottom:10px;
+    animation:nameReveal 1.5s cubic-bezier(0.16,1,0.3,1) forwards 0.3s;
+    opacity:0; transform:translateY(20px);
+    position:relative;
   }
-  @keyframes nameBreath{0%,100%{opacity:0.85}50%{opacity:1}}
+  @keyframes nameReveal{to{opacity:1;transform:translateY(0)}}
+
+  /* Shimmer sweep across name */
+  .splash-name::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.15) 50%,transparent 100%);
+    background-size:200% 100%;
+    animation:nameSweep 4s ease-in-out infinite 2s;
+    -webkit-background-clip:text;
+  }
+  @keyframes nameSweep{0%,100%{background-position:-100%}50%{background-position:200%}}
+
+  /* Ember dot */
+  .splash-ember-row {
+    display:flex; align-items:center; gap:10px; margin-bottom:10px;
+    animation:fadeIn 1s ease forwards 1s; opacity:0;
+  }
+  .s-line { width:40px; height:1px; background:linear-gradient(90deg, transparent, rgba(194,224,244,0.2)); }
+  .s-line.r { background:linear-gradient(90deg, rgba(194,224,244,0.2), transparent); }
+  .s-dot { width:4px; height:4px; border-radius:50%; background:var(--ember); box-shadow:0 0 8px var(--ember), 0 0 20px rgba(232,144,58,0.4); animation:emberPulse 2.5s ease-in-out infinite; }
+  @keyframes emberPulse{0%,100%{transform:scale(1);opacity:0.6;box-shadow:0 0 8px var(--ember)}50%{transform:scale(2);opacity:1;box-shadow:0 0 16px var(--ember),0 0 30px rgba(232,144,58,0.5)}}
+  @keyframes fadeIn{to{opacity:1}}
 
   .splash-sub {
-    font-size:0.55rem; color:#2a5575;
+    font-family:'Noto Serif JP', serif;
+    font-size:0.5rem; color:rgba(194,224,244,0.3);
     letter-spacing:6px; text-transform:uppercase;
-    margin-bottom:48px; position:relative; z-index:1;
-    animation:subFade 3s ease-in-out infinite;
+    margin-bottom:52px;
+    animation:fadeIn 1s ease forwards 1.4s; opacity:0;
   }
-  @keyframes subFade{0%,100%{opacity:0.3}50%{opacity:0.7}}
 
   .splash-btn {
-    position:relative; z-index:1;
-    padding:13px 48px; background:transparent;
-    border:1px solid rgba(194,224,244,0.35); color:#c2e0f4;
-    font-family:'Cinzel', serif; font-size:0.72rem;
-    letter-spacing:5px; cursor:pointer; border-radius:2px;
-    transition:all 0.35s;
+    padding:14px 54px; background:transparent;
+    border:1px solid rgba(194,224,244,0.2); color:var(--ice);
+    font-family:'Cinzel', serif; font-size:0.68rem;
+    letter-spacing:7px; cursor:none; border-radius:1px;
+    transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position:relative; overflow:hidden;
+    animation:btnReveal 1s ease forwards 1.8s; opacity:0; transform:translateY(10px);
   }
+  @keyframes btnReveal{to{opacity:1;transform:translateY(0)}}
+
+  /* Frost sweep on btn */
+  .splash-btn::before {
+    content:''; position:absolute;
+    top:0; left:-100%; width:100%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(194,224,244,0.08), transparent);
+    transition:left 0.5s ease;
+  }
+  .splash-btn:hover::before { left:100%; }
   .splash-btn:hover {
-    border-color:rgba(168,216,240,0.7);
-    color:var(--frost);
-    box-shadow:0 0 30px rgba(168,216,240,0.12);
-    letter-spacing:7px;
+    border-color:rgba(194,224,244,0.55);
+    color:var(--frost); letter-spacing:9px;
+    box-shadow:0 0 30px rgba(194,224,244,0.1), inset 0 0 20px rgba(194,224,244,0.03);
   }
 
   .splash-hint {
-    margin-top:14px; font-size:0.48rem; color:#0d1e2e;
-    letter-spacing:3px; position:relative; z-index:1;
-    animation:blink 2.5s ease-in-out infinite;
+    margin-top:16px; font-size:0.44rem; color:rgba(194,224,244,0.1);
+    letter-spacing:4px;
+    animation:fadeIn 1s ease forwards 2.4s, hintBlink 3s ease-in-out infinite 2.4s;
+    opacity:0;
   }
-  @keyframes blink{0%,100%{opacity:0.2}50%{opacity:0.6}}
+  @keyframes hintBlink{0%,100%{opacity:0.1}50%{opacity:0.4}}
 
-  /* ══ CARD ════════════════════════════════════ */
+  /* ══════════════════════════════════════════
+     CARD
+  ══════════════════════════════════════════ */
   .card {
     position:relative; z-index:1;
     width:390px; max-width:95vw;
-    background:#0c1825;
+    background:linear-gradient(160deg, #0a1520 0%, #07101a 100%);
     border:1px solid var(--border);
-    border-radius:4px;
-    animation:cardIn 1s cubic-bezier(0.16,1,0.3,1) forwards;
-    opacity:0; transform:translateY(28px);
-    box-shadow:0 30px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(194,224,244,0.1);
+    border-radius:3px;
+    animation:cardReveal 1.4s cubic-bezier(0.16,1,0.3,1) forwards;
+    opacity:0; transform:translateY(36px) scale(0.96);
+    box-shadow:
+      0 0 0 1px rgba(194,224,244,0.03),
+      0 40px 100px rgba(0,0,0,0.9),
+      0 0 60px rgba(194,224,244,0.04),
+      inset 0 1px 0 rgba(194,224,244,0.09);
     overflow:hidden;
   }
-  @keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+  @keyframes cardReveal{to{opacity:1;transform:translateY(0) scale(1)}}
 
-  /* Thin blue top line */
+  /* Ice border top — slow breath + glow */
   .card::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:1px;
-    background:linear-gradient(90deg, transparent, var(--b2), var(--ice), var(--b2), transparent);
-    opacity:0.5;
+    content:''; position:absolute; top:0; left:0; right:0; height:1px; z-index:10;
+    background:linear-gradient(90deg,
+      transparent 0%,
+      rgba(194,224,244,0.0) 5%,
+      rgba(142,200,232,0.5) 25%,
+      var(--frost) 50%,
+      rgba(142,200,232,0.5) 75%,
+      rgba(194,224,244,0.0) 95%,
+      transparent 100%
+    );
+    background-size:200% 100%;
+    animation:iceBorderBreath 5s cubic-bezier(0.45,0,0.55,1) infinite;
+    box-shadow:0 0 8px rgba(194,224,244,0.15), 0 0 20px rgba(194,224,244,0.06);
+  }
+  @keyframes iceBorderBreath {
+    0%   { background-position:120% 0; opacity:0.3; box-shadow:0 0 4px rgba(194,224,244,0.08); }
+    30%  { opacity:0.9; box-shadow:0 0 12px rgba(194,224,244,0.3), 0 0 30px rgba(194,224,244,0.1); }
+    50%  { background-position:-20% 0; opacity:0.7; }
+    70%  { opacity:1; box-shadow:0 0 16px rgba(194,224,244,0.4), 0 0 40px rgba(194,224,244,0.12); }
+    100% { background-position:120% 0; opacity:0.3; box-shadow:0 0 4px rgba(194,224,244,0.08); }
   }
 
-  /* ── BANNER ──────────────────────────────── */
+  /* Ember glow bottom */
+  .card::after {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(232,144,58,0.12),transparent);
+    animation:emberLine 8s ease-in-out infinite;
+  }
+  @keyframes emberLine{0%,100%{opacity:0.3}50%{opacity:0.9}}
+
+  /* Frost particles on card corners */
+  .frost-tl, .frost-tr, .frost-bl, .frost-br {
+    position:absolute; width:50px; height:50px;
+    pointer-events:none; z-index:5; opacity:0.07;
+  }
+  .frost-tl { top:0; left:0; }
+  .frost-tr { top:0; right:0; transform:scaleX(-1); }
+  .frost-bl { bottom:0; left:0; transform:scaleY(-1); }
+  .frost-br { bottom:0; right:0; transform:scale(-1); }
+
+  /* ── BANNER ─────────────────────────────── */
   .banner {
-    height:110px; position:relative; overflow:hidden;
-    background:linear-gradient(180deg, #060e1c 0%, #0a1628 100%);
+    height:140px; position:relative; overflow:hidden;
+    background:linear-gradient(180deg, #030c18 0%, #06121e 100%);
   }
   #bannerCanvas { position:absolute; inset:0; width:100%; height:100%; }
 
-  /* Subtle horizon glow */
-  .banner-glow {
-    position:absolute; bottom:0; left:0; right:0; height:60px;
-    background:linear-gradient(180deg, transparent, rgba(74,159,212,0.06));
-    pointer-events:none;
+  /* Parallax mountain layers */
+  .mtn-far {
+    position:absolute; bottom:0; left:0; right:0; height:70px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70'%3E%3Cpath d='M0,70 L60,25 L120,50 L180,10 L240,35 L300,5 L360,28 L400,18 L400,70Z' fill='%23050e1a'/%3E%3C/svg%3E") no-repeat bottom/cover;
+    animation:mtnParallax 20s ease-in-out infinite;
+  }
+  .mtn-near {
+    position:absolute; bottom:0; left:0; right:0; height:45px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 45'%3E%3Cpath d='M0,45 L40,18 L90,35 L140,8 L190,28 L240,2 L290,20 L340,10 L390,22 L400,18 L400,45Z' fill='%23060f1c'/%3E%3C/svg%3E") no-repeat bottom/cover;
+    animation:mtnParallax2 15s ease-in-out infinite;
+  }
+  @keyframes mtnParallax{0%,100%{transform:translateX(0)}50%{transform:translateX(-8px)}}
+  @keyframes mtnParallax2{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+
+  /* Snow on peaks */
+  .mtn-snow {
+    position:absolute; bottom:8px; left:0; right:0; height:20px; pointer-events:none;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 20'%3E%3Cpath d='M170,20 L180,3 L190,20 M230,20 L240,0 L250,20 M290,20 L300,6 L310,20' fill='rgba(194,224,244,0.08)'/%3E%3C/svg%3E") no-repeat bottom/cover;
   }
 
-  /* Snow ridge at bottom */
-  .banner-ridge {
-    position:absolute; bottom:0; left:0; right:0; height:22px;
-    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 22'%3E%3Cpath d='M0,22 Q50,8 100,15 Q150,22 200,10 Q250,2 300,14 Q350,22 400,12 L400,22Z' fill='rgba(194,224,244,0.04)'/%3E%3C/svg%3E") no-repeat bottom/cover;
+  /* Aurora shimmer over banner — fluid layered */
+  .banner-aurora-shimmer {
+    position:absolute; top:0; left:-5%; right:-5%; height:70%;
+    pointer-events:none; filter:blur(6px);
+    background:linear-gradient(180deg,
+      rgba(194,224,244,0.09) 0%,
+      rgba(142,200,232,0.06) 40%,
+      rgba(194,224,244,0.02) 75%,
+      transparent 100%
+    );
+    animation:bannerAuroraFlow 12s cubic-bezier(0.45,0,0.55,1) infinite;
+    transform-origin:top center;
+  }
+  .banner-aurora-shimmer::after {
+    content:''; position:absolute; top:10%; left:10%; right:10%; height:50%;
+    background:linear-gradient(90deg,
+      transparent 0%,
+      rgba(194,224,244,0.05) 30%,
+      rgba(232,144,58,0.015) 50%,
+      rgba(194,224,244,0.05) 70%,
+      transparent 100%
+    );
+    animation:bannerRay 8s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  @keyframes bannerAuroraFlow {
+    0%   { transform:skewX(-2deg) scaleY(0.85) translateX(-3%); opacity:0.5; }
+    25%  { transform:skewX(1.5deg) scaleY(1.1) translateX(2%);  opacity:1;   }
+    55%  { transform:skewX(-1deg) scaleY(0.95) translateX(4%);  opacity:0.7; }
+    80%  { transform:skewX(2deg)  scaleY(1.05) translateX(-1%); opacity:0.9; }
+    100% { transform:skewX(-2deg) scaleY(0.85) translateX(-3%); opacity:0.5; }
+  }
+  @keyframes bannerRay {
+    0%,100% { transform:translateX(-20%) scaleX(0.8); opacity:0.3; }
+    50%     { transform:translateX(20%)  scaleX(1.3); opacity:0.8; }
+  }
+
+  /* Ember spark in banner */
+  .banner-spark {
+    position:absolute;
+    border-radius:50%;
+    animation:sparkFloat ease-in-out infinite;
     pointer-events:none;
+  }
+  @keyframes sparkFloat{
+    0%{opacity:0;transform:translateY(0) scale(0.5)}
+    20%{opacity:1}
+    80%{opacity:0.8}
+    100%{opacity:0;transform:translateY(-30px) scale(0.2)}
   }
 
   .banner-label {
-    position:absolute; bottom:8px; left:18px;
-    font-size:0.5rem; letter-spacing:5px; color:rgba(194,224,244,0.4);
+    position:absolute; bottom:9px; left:18px;
+    font-size:0.47rem; letter-spacing:4px;
+    color:rgba(194,224,244,0.28);
     font-family:'Cinzel',serif; text-transform:uppercase;
+    animation:labelBreath 6s ease-in-out infinite;
   }
+  @keyframes labelBreath{0%,100%{opacity:0.28}50%{opacity:0.5}}
 
-  /* ── AVATAR ──────────────────────────────── */
+  .banner-kanji {
+    position:absolute; top:10px; right:15px;
+    font-family:'Noto Serif JP', serif;
+    font-size:0.7rem; color:rgba(194,224,244,0.1);
+    writing-mode:vertical-rl; letter-spacing:4px;
+    animation:kanjiBreath 7s ease-in-out infinite;
+  }
+  @keyframes kanjiBreath{0%,100%{opacity:0.1}50%{opacity:0.22}}
+
+  /* ── AVATAR ─────────────────────────────── */
   .avatar-wrapper {
     display:flex; justify-content:center;
-    margin-top:-46px; margin-bottom:16px;
-    position:relative; z-index:2;
+    margin-top:-48px; margin-bottom:18px;
+    position:relative; z-index:4;
   }
-  .avatar-outer { position:relative; width:92px; height:92px; }
+  .avatar-outer { position:relative; width:96px; height:96px; }
 
-  .avatar-ring {
-    position:absolute; inset:-2px; border-radius:50%;
-    background:conic-gradient(
-      var(--b3) 0deg, var(--frost) 70deg,
-      transparent 90deg, transparent 110deg,
-      var(--b2) 160deg, var(--b3) 230deg,
-      transparent 250deg, transparent 270deg,
-      var(--ice) 330deg, var(--b3) 360deg
+  /* Outer glow ring — layered organic pulse */
+  .avatar-glow-ring {
+    position:absolute; inset:-12px; border-radius:50%;
+    pointer-events:none;
+    animation:glowRingPulse 5s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  .avatar-glow-ring::before {
+    content:''; position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle,
+      rgba(194,224,244,0.12) 0%,
+      rgba(194,224,244,0.06) 40%,
+      transparent 70%
     );
-    animation:ringTurn 6s linear infinite;
+    animation:glowInner 3s cubic-bezier(0.45,0,0.55,1) infinite;
   }
-  @keyframes ringTurn{to{transform:rotate(360deg)}}
+  .avatar-glow-ring::after {
+    content:''; position:absolute; inset:-6px; border-radius:50%;
+    background:radial-gradient(circle,
+      rgba(194,224,244,0.04) 0%,
+      rgba(232,144,58,0.02) 50%,
+      transparent 70%
+    );
+    animation:glowOuter 7s cubic-bezier(0.45,0,0.55,1) infinite reverse;
+  }
+  @keyframes glowRingPulse {
+    0%,100% { transform:scale(0.92); opacity:0.5; }
+    40%     { transform:scale(1.0);  opacity:0.8; }
+    70%     { transform:scale(1.12); opacity:1;   }
+  }
+  @keyframes glowInner {
+    0%,100% { opacity:0.4; transform:scale(0.95); }
+    50%     { opacity:1;   transform:scale(1.08); }
+  }
+  @keyframes glowOuter {
+    0%,100% { opacity:0.3; transform:scale(1.0);  }
+    50%     { opacity:0.8; transform:scale(1.2);  }
+  }
 
-  .avatar-ring-inner { position:absolute; inset:1px; border-radius:50%; background:#0c1825; z-index:1; }
+  /* Ice ring — rotates */
+  .avatar-ring-ice {
+    position:absolute; inset:-3px; border-radius:50%;
+    background:conic-gradient(
+      var(--ice) 0deg, var(--frost) 50deg,
+      rgba(255,255,255,0.03) 75deg, rgba(255,255,255,0.03) 100deg,
+      var(--ice2) 145deg, var(--ice) 200deg,
+      rgba(255,255,255,0.03) 225deg, rgba(255,255,255,0.03) 255deg,
+      var(--frost) 305deg, var(--ice) 360deg
+    );
+    animation:iceRingCW 8s linear infinite;
+  }
+  @keyframes iceRingCW{to{transform:rotate(360deg)}}
+
+  /* Ember ring — counter-rotates slower */
+  .avatar-ring-ember {
+    position:absolute; inset:0px; border-radius:50%;
+    background:conic-gradient(
+      transparent 0deg, transparent 150deg,
+      rgba(232,144,58,0.45) 175deg,
+      rgba(240,176,96,0.3) 195deg,
+      transparent 220deg, transparent 360deg
+    );
+    animation:emberRingCCW 12s linear infinite;
+  }
+  @keyframes emberRingCCW{to{transform:rotate(-360deg)}}
+
+  .avatar-ring-bg { position:absolute; inset:2px; border-radius:50%; background:var(--panel); z-index:1; }
 
   .avatar-img {
     position:absolute; inset:5px; border-radius:50%;
     overflow:hidden; z-index:2;
-    background:linear-gradient(135deg,#0a1828,#102035);
+    background:linear-gradient(135deg,#08162a,#0e2038);
     display:flex; align-items:center; justify-content:center;
-    font-size:2rem;
+    font-size:2.2rem;
   }
   .avatar-img img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 
-  /* 3 orbiting dots */
-  .orb-dot {
+  /* Hexagonal ice crystal orbit — 4 points */
+  .hex-dot {
     position:absolute; top:50%; left:50%;
-    border-radius:50%; z-index:3;
-    animation:orbDot linear infinite;
+    z-index:3; pointer-events:none;
+    animation:hexOrbit linear infinite;
   }
-  @keyframes orbDot{
-    0%  {transform:rotate(0deg)   translateX(50px);opacity:0.9}
-    50% {transform:rotate(180deg) translateX(50px);opacity:0.2}
-    100%{transform:rotate(360deg) translateX(50px);opacity:0.9}
+  @keyframes hexOrbit{
+    0%  {transform:rotate(var(--start)) translateX(54px) rotate(calc(var(--start)*-1));opacity:1}
+    40% {opacity:0.2}
+    60% {opacity:0.2}
+    100%{transform:rotate(calc(var(--start) + 360deg)) translateX(54px) rotate(calc((var(--start)+360deg)*-1));opacity:1}
   }
 
   .avatar-shadow {
-    position:absolute; bottom:-8px; left:50%;
-    transform:translateX(-50%);
-    width:64px; height:14px;
-    background:radial-gradient(ellipse,rgba(74,159,212,0.3),transparent 70%);
-    border-radius:50%; animation:shadowPulse 3s ease-in-out infinite;
+    position:absolute; bottom:-12px; left:50%;
+    width:76px; height:18px;
+    background:radial-gradient(ellipse, rgba(194,224,244,0.22), transparent 70%);
+    border-radius:50%; transform:translateX(-50%);
+    animation:shadowPulse 4s ease-in-out infinite;
   }
-  @keyframes shadowPulse{0%,100%{opacity:0.4;transform:translateX(-50%) scaleX(1)}50%{opacity:0.8;transform:translateX(-50%) scaleX(1.3)}}
+  @keyframes shadowPulse{0%,100%{opacity:0.4;transform:translateX(-50%) scaleX(0.9)}50%{opacity:0.9;transform:translateX(-50%) scaleX(1.3)}}
 
   /* ── INFO ────────────────────────────────── */
-  .info { padding:0 26px 26px; text-align:center; }
+  .info { padding:0 26px 28px; text-align:center; }
+
+  /* Staggered content reveal */
+  .reveal {
+    animation:revealUp 0.9s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  @keyframes revealUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
   .username {
     font-family:'Cinzel', serif;
-    font-size:1.8rem; font-weight:600;
-    letter-spacing:4px; margin-bottom:4px;
-    color:#e8f4ff;
-    text-shadow:0 0 24px rgba(194,224,244,0.4), 0 0 60px rgba(74,159,212,0.15);
+    font-size:1.85rem; font-weight:600;
+    letter-spacing:5px; margin-bottom:4px;
+    color:var(--frost);
+    text-shadow:0 0 24px rgba(194,224,244,0.35), 0 0 60px rgba(194,224,244,0.1);
+    position:relative;
   }
+  /* Ice shimmer on username */
+  .username::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.12) 50%,transparent 60%);
+    background-size:200% 100%;
+    animation:textShimmer 5s ease-in-out infinite;
+  }
+  @keyframes textShimmer{0%,100%{background-position:200%}50%{background-position:-200%}}
+
+  .lore-name {
+    font-family:'Noto Serif JP', serif;
+    font-size:0.62rem; color:rgba(194,224,244,0.35);
+    letter-spacing:4px; margin-bottom:5px;
+    animation:loreGlow 6s ease-in-out infinite;
+  }
+  @keyframes loreGlow{0%,100%{opacity:0.35}50%{opacity:0.6;text-shadow:0 0 10px rgba(194,224,244,0.3)}}
 
   .tag {
-    font-size:0.58rem; color:#4a7fa0;
-    letter-spacing:3px; text-transform:uppercase; margin-bottom:16px;
-    font-weight:400;
+    font-size:0.54rem; color:var(--muted);
+    letter-spacing:3px; text-transform:uppercase; margin-bottom:18px;
+    font-family:'Cinzel', serif;
   }
 
-  /* Divider */
+  /* Divider — frost line with ember center pulse */
   .divider {
-    display:flex; align-items:center; gap:12px; margin-bottom:16px;
+    display:flex; align-items:center; gap:0; margin-bottom:18px;
+    position:relative; overflow:hidden;
   }
-  .divider::before { content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--border)); }
-  .divider::after  { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
-  .divider span { font-size:0.65rem; color:rgba(194,224,244,0.55); letter-spacing:2px; }
+  .div-line {
+    flex:1; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(194,224,244,0.15));
+    position:relative; overflow:hidden;
+  }
+  .div-line.r { background:linear-gradient(90deg,rgba(194,224,244,0.15),transparent); }
+  /* Traveling shimmer on divider — smooth ease */
+  .div-line::after {
+    content:''; position:absolute; top:-1px; bottom:-1px;
+    width:40%; background:linear-gradient(90deg,
+      transparent 0%,
+      rgba(194,224,244,0.6) 50%,
+      transparent 100%
+    );
+    animation:divTravel 5s cubic-bezier(0.4,0,0.6,1) infinite;
+    filter:blur(1px);
+  }
+  .div-line.r::after { animation:divTravelR 5s cubic-bezier(0.4,0,0.6,1) infinite; }
+  @keyframes divTravel {
+    0%   { left:-40%; opacity:0;   }
+    10%  { opacity:1; }
+    90%  { opacity:1; }
+    100% { left:140%; opacity:0;   }
+  }
+  @keyframes divTravelR {
+    0%   { right:-40%; opacity:0;  }
+    10%  { opacity:1; }
+    90%  { opacity:1; }
+    100% { right:140%; opacity:0;  }
+  }
+
+  .div-center { display:flex; align-items:center; gap:5px; padding:0 10px; }
+  .div-ice  { font-size:0.6rem; color:rgba(194,224,244,0.4); }
+  .div-fire {
+    font-size:0.5rem; color:var(--ember);
+    animation:emberPulse 2.5s ease-in-out infinite;
+    text-shadow:0 0 6px var(--ember);
+  }
 
   .desc {
-    font-size:0.78rem; color:#7aabcc; line-height:1.9;
-    margin-bottom:22px; font-weight:300;
+    font-size:0.78rem; color:#4a7898; line-height:1.95;
+    margin-bottom:20px; font-weight:400;
+    font-family:'IM Fell English', serif; font-style:italic;
   }
-  .desc em { color:#c2e0f4; font-style:normal; font-weight:400; }
+  .desc em      { color:var(--ice); font-style:normal; }
+  .desc em.fire { color:var(--ember2); font-style:normal; }
 
-  /* ── LINKS ───────────────────────────────── */
-  .links { display:flex; flex-direction:column; gap:8px; }
+  /* Lore snippet — quote block */
+  .lore-snippet {
+    background:rgba(194,224,244,0.02);
+    border:1px solid rgba(194,224,244,0.06);
+    border-left:2px solid rgba(194,224,244,0.18);
+    border-radius:1px; padding:12px 14px;
+    margin-bottom:20px; text-align:left;
+    position:relative; overflow:hidden;
+    transition:border-color 0.4s, box-shadow 0.4s;
+  }
+  .lore-snippet:hover {
+    border-left-color:rgba(194,224,244,0.45);
+    box-shadow:0 0 20px rgba(194,224,244,0.04), inset 0 0 30px rgba(194,224,244,0.02);
+  }
+  /* Ember corner glow */
+  .lore-snippet::after {
+    content:''; position:absolute; bottom:0; right:0;
+    width:50px; height:50px;
+    background:radial-gradient(circle at 100% 100%, rgba(232,144,58,0.07), transparent 70%);
+    animation:cornerGlow 5s ease-in-out infinite;
+  }
+  @keyframes cornerGlow{0%,100%{opacity:0.5}50%{opacity:1}}
+  .lore-snippet p {
+    font-family:'Noto Serif JP', serif; font-weight:300;
+    font-size:0.66rem; color:#3a6080; line-height:1.9;
+    font-style:italic;
+  }
+  .lore-snippet p em { color:rgba(194,224,244,0.45); font-style:normal; }
+
+  /* ── BUTTONS ─────────────────────────────── */
+  .links { display:flex; flex-direction:column; gap:7px; }
 
   .btn {
     display:flex; align-items:center; gap:12px;
-    padding:11px 16px;
-    background:transparent;
-    border:1px solid var(--border);
-    border-radius:3px;
-    color:#c2e0f4; text-decoration:none;
-    font-family:'Inter', sans-serif; font-size:0.78rem; font-weight:300;
-    transition:all 0.3s ease;
+    padding:12px 16px;
+    background:rgba(194,224,244,0.02);
+    border:1px solid rgba(21,40,64,0.8);
+    border-radius:2px;
+    color:var(--ice); text-decoration:none;
+    font-family:'IM Fell English', serif; font-size:0.8rem;
+    transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
     position:relative; overflow:hidden;
   }
-  .btn::after {
-    content:''; position:absolute; left:0; top:0; bottom:0; width:0;
-    background:rgba(74,159,212,0.06);
-    transition:width 0.3s ease;
-  }
-  .btn:hover {
-    border-color:rgba(194,224,244,0.35);
-    color:#e8f4ff;
-    transform:translateX(3px);
-  }
-  .btn:hover::after { width:100%; }
-  .btn { background:rgba(194,224,244,0.02); }
 
-  .btn-yt:hover { border-color:rgba(255,80,80,0.2); color:#ffaaaa; }
-  .btn-donate:hover { border-color:rgba(74,159,212,0.3); color:var(--b3); }
+  /* Frost shimmer sweep */
+  .btn::before {
+    content:''; position:absolute;
+    top:0; left:-100%; width:100%; height:100%;
+    background:linear-gradient(90deg,transparent,rgba(194,224,244,0.06),transparent);
+    transition:left 0.5s ease;
+  }
+  .btn:hover::before { left:100%; }
+
+  /* Left accent line */
+  .btn::after {
+    content:''; position:absolute; left:0; top:20%; bottom:20%;
+    width:2px; border-radius:1px;
+    background:var(--ice2); opacity:0;
+    transform:scaleY(0);
+    transition:opacity 0.3s, transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .btn:hover::after { opacity:0.6; transform:scaleY(1); }
+
+  .btn:hover {
+    border-color:rgba(194,224,244,0.18);
+    color:var(--frost);
+    transform:translateX(4px);
+    box-shadow:0 4px 24px rgba(194,224,244,0.06);
+    background:rgba(194,224,244,0.03);
+  }
+
+  .btn-yt:hover { border-color:rgba(255,80,80,0.2); color:#ffbbbb; }
+  .btn-yt::after { background:#ff6666; }
+
+  .btn-donate:hover { border-color:rgba(232,144,58,0.22); color:var(--ember2); }
+  .btn-donate::after { background:var(--ember); }
 
   .btn-icon {
-    width:24px; height:24px; border-radius:4px;
+    width:26px; height:26px; border-radius:4px;
     display:flex; align-items:center; justify-content:center;
-    flex-shrink:0; background:rgba(255,255,255,0.03);
+    flex-shrink:0;
+    background:rgba(255,255,255,0.025);
+    transition:background 0.3s;
   }
-  .btn-label { flex:1; text-align:left; }
-  .btn-name  { display:block; font-size:0.78rem; font-weight:400; }
-  .btn-sub   { display:block; font-size:0.6rem; color:#3d6a8a; margin-top:1px; letter-spacing:0.5px; }
-  .btn-arrow { font-size:0.6rem; color:#2a5070; transition:all 0.3s; flex-shrink:0; }
-  .btn:hover .btn-arrow { transform:translateX(4px); color:var(--b3); }
+  .btn:hover .btn-icon { background:rgba(194,224,244,0.06); }
 
-  /* ── MUSIC PLAYER ────────────────────────── */
+  .btn-label { flex:1; text-align:left; }
+  .btn-name  { display:block; font-size:0.78rem; font-style:italic; }
+  .btn-sub   { display:block; font-size:0.58rem; color:var(--muted); margin-top:1px; font-style:normal; font-family:'Cinzel',serif; letter-spacing:0.5px; }
+  .btn-arrow { font-size:0.65rem; color:var(--dim); transition:all 0.35s; flex-shrink:0; }
+  .btn:hover .btn-arrow { transform:translateX(5px); color:var(--ice); }
+  .btn-donate:hover .btn-arrow { color:var(--ember2); }
+
+  /* ── MUSIC PLAYER ─────────────────────────── */
   .music-player {
     margin-top:16px;
-    background:rgba(194,224,244,0.03);
-    border:1px solid #1e3d5c;
-    border-radius:3px; padding:11px 14px;
+    background:rgba(194,224,244,0.018);
+    border:1px solid rgba(21,40,64,0.9);
+    border-radius:2px; padding:12px 14px;
     display:flex; align-items:center; gap:11px;
-    position:relative;
+    position:relative; overflow:hidden;
+    transition:border-color 0.4s;
   }
+  .music-player:hover { border-color:rgba(194,224,244,0.12); }
+
+  /* Animated border top */
   .music-player::before {
     content:''; position:absolute; top:0; left:0; right:0; height:1px;
-    background:linear-gradient(90deg,transparent,rgba(168,216,240,0.2),transparent);
+    background:linear-gradient(90deg,transparent,rgba(194,224,244,0.2),rgba(232,144,58,0.08),transparent);
+    background-size:200% 100%;
+    animation:musicBorderFlow 6s linear infinite;
+  }
+  @keyframes musicBorderFlow{0%{background-position:200%}100%{background-position:-200%}}
+
+  /* Ember warm glow at bottom right */
+  .music-player::after {
+    content:''; position:absolute; bottom:0; right:0;
+    width:80px; height:80px;
+    background:radial-gradient(circle at 100% 100%, rgba(232,144,58,0.04), transparent 70%);
   }
 
   .music-play-btn {
-    width:32px; height:32px; border-radius:50%;
-    background:linear-gradient(135deg,var(--b1),var(--b2));
-    border:none; cursor:pointer;
+    width:34px; height:34px; border-radius:50%;
+    background:linear-gradient(135deg, #142240, #1e3860);
+    border:1px solid rgba(194,224,244,0.18);
+    cursor:none; flex-shrink:0; color:var(--frost); font-size:0.72rem;
     display:flex; align-items:center; justify-content:center;
-    flex-shrink:0; color:white; font-size:0.7rem;
-    transition:all 0.25s;
-    box-shadow:0 0 12px rgba(74,159,212,0.25);
+    transition:all 0.3s;
+    box-shadow:0 0 14px rgba(194,224,244,0.12);
+    position:relative; overflow:hidden;
   }
-  .music-play-btn:hover { transform:scale(1.08); box-shadow:0 0 22px rgba(74,159,212,0.5); }
+  .music-play-btn::before {
+    content:''; position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle, rgba(194,224,244,0.15), transparent 70%);
+    opacity:0; transition:opacity 0.3s;
+  }
+  .music-play-btn:hover::before { opacity:1; }
+  .music-play-btn:hover { transform:scale(1.1); box-shadow:0 0 26px rgba(194,224,244,0.35), 0 0 50px rgba(194,224,244,0.1); }
 
   .music-info { flex:1; min-width:0; }
-  .music-title { font-size:0.6rem; color:#c2e0f4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:5px; font-family:'Cinzel',serif; letter-spacing:0.5px; }
-  .music-bar { height:2px; background:rgba(255,255,255,0.05); border-radius:1px; overflow:hidden; cursor:pointer; }
-  .music-progress { height:100%; background:linear-gradient(90deg,var(--b2),var(--ice)); border-radius:1px; width:0%; transition:width 0.5s linear; }
-  .music-time { font-size:0.48rem; color:var(--muted); margin-top:4px; }
+  .music-title {
+    font-size:0.6rem; color:var(--ice);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    margin-bottom:6px; font-family:'Cinzel',serif; letter-spacing:0.5px;
+  }
+  .music-bar {
+    height:2px; background:rgba(194,224,244,0.05);
+    border-radius:1px; cursor:none; overflow:hidden;
+    position:relative;
+  }
+  .music-progress {
+    height:100%; width:0%;
+    background:linear-gradient(90deg,var(--ice2),var(--frost));
+    border-radius:1px; transition:width 0.5s linear;
+    position:relative;
+  }
+  /* Glow on progress tip */
+  .music-progress::after {
+    content:''; position:absolute; right:0; top:-1px; bottom:-1px;
+    width:6px;
+    background:radial-gradient(circle, rgba(255,255,255,0.8), transparent 70%);
+    border-radius:50%;
+  }
+  .music-time { font-size:0.46rem; color:var(--muted); margin-top:4px; font-family:'Cinzel',serif; }
 
-  .eq { display:flex; align-items:flex-end; gap:2px; height:12px; flex-shrink:0; }
-  .eq-bar { width:2px; background:var(--b3); border-radius:1px; height:2px; opacity:0.2; }
-  .eq-bar.playing { opacity:0.7; animation:eqPulse ease-in-out infinite; }
-  @keyframes eqPulse{0%,100%{height:2px}50%{height:12px}}
+  .eq { display:flex; align-items:flex-end; gap:2px; height:14px; flex-shrink:0; }
+  .eq-bar {
+    width:2px; border-radius:1px; height:2px; opacity:0.15;
+    background:linear-gradient(to top, var(--ice2), var(--frost));
+    transition:opacity 0.3s;
+  }
+  .eq-bar.playing {
+    opacity:0.7;
+    animation:eqDance ease-in-out infinite;
+    box-shadow:0 0 4px rgba(194,224,244,0.3);
+  }
+  @keyframes eqDance{
+    0%{height:2px}
+    25%{height:10px}
+    50%{height:5px}
+    75%{height:14px}
+    100%{height:2px}
+  }
 
   .music-vol { display:flex; align-items:center; gap:4px; flex-shrink:0; }
-  .vol-icon { font-size:0.6rem; color:var(--muted); }
-  .vol-slider { -webkit-appearance:none; width:40px; height:2px; background:rgba(255,255,255,0.06); border-radius:1px; outline:none; }
-  .vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:9px; height:9px; border-radius:50%; background:var(--b3); cursor:pointer; }
+  .vol-icon { font-size:0.58rem; color:var(--muted); }
+  .vol-slider {
+    -webkit-appearance:none; width:40px; height:2px;
+    background:rgba(194,224,244,0.08); border-radius:1px; outline:none;
+  }
+  .vol-slider::-webkit-slider-thumb {
+    -webkit-appearance:none; width:10px; height:10px;
+    border-radius:50%; background:var(--ice); cursor:none;
+    box-shadow:0 0 6px rgba(194,224,244,0.5);
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .vol-slider:hover::-webkit-slider-thumb {
+    transform:scale(1.3);
+    box-shadow:0 0 12px rgba(194,224,244,0.7);
+  }
 
   /* ── FOOTER ──────────────────────────────── */
-  .footer {
-    margin-top:22px; text-align:center;
-    font-size:0.5rem; color:#2a5070;
-    letter-spacing:3px; text-transform:uppercase;
+  .footer { margin-top:24px; text-align:center; }
+  .footer-divider {
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
   }
-  .footer-line {
-    width:40px; height:1px; margin:0 auto 8px;
-    background:linear-gradient(90deg,transparent,rgba(168,216,240,0.15),transparent);
+  .footer-divider::before,.footer-divider::after {
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(194,224,244,0.07));
+  }
+  .footer-divider::after { background:linear-gradient(90deg,rgba(194,224,244,0.07),transparent); }
+  .footer-sym {
+    font-size:0.5rem; color:rgba(194,224,244,0.15);
+    letter-spacing:5px;
+    animation:footerGlow 6s ease-in-out infinite;
+  }
+  @keyframes footerGlow{0%,100%{opacity:0.4;letter-spacing:5px}50%{opacity:0.8;letter-spacing:7px}}
+  .footer-text { font-size:0.47rem; color:var(--dim); letter-spacing:4px; text-transform:uppercase; font-family:'Cinzel',serif; }
+  .footer-lore {
+    font-size:0.46rem; color:rgba(194,224,244,0.1);
+    letter-spacing:3px; margin-top:5px;
+    font-family:'Noto Serif JP', serif;
+    animation:kanjiBreath 8s ease-in-out infinite;
   }
 </style>
 </head>
 <body>
 
+<!-- Custom cursor -->
+<div id="cursor">
+  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="10" y1="1" x2="10" y2="19" stroke="rgba(194,224,244,0.7)" stroke-width="0.8"/>
+    <line x1="1" y1="10" x2="19" y2="10" stroke="rgba(194,224,244,0.7)" stroke-width="0.8"/>
+    <line x1="3.9" y1="3.9" x2="16.1" y2="16.1" stroke="rgba(194,224,244,0.4)" stroke-width="0.8"/>
+    <line x1="16.1" y1="3.9" x2="3.9" y2="16.1" stroke="rgba(194,224,244,0.4)" stroke-width="0.8"/>
+    <circle cx="10" cy="10" r="1.5" fill="rgba(194,224,244,0.9)"/>
+    <circle cx="10" cy="10" r="4" stroke="rgba(194,224,244,0.3)" stroke-width="0.5"/>
+    <!-- hex points -->
+    <circle cx="10" cy="2" r="0.8" fill="rgba(194,224,244,0.6)"/>
+    <circle cx="10" cy="18" r="0.8" fill="rgba(194,224,244,0.6)"/>
+    <circle cx="2" cy="10" r="0.8" fill="rgba(194,224,244,0.6)"/>
+    <circle cx="18" cy="10" r="0.8" fill="rgba(194,224,244,0.6)"/>
+    <circle cx="4.3" cy="4.3" r="0.6" fill="rgba(194,224,244,0.3)"/>
+    <circle cx="15.7" cy="15.7" r="0.6" fill="rgba(194,224,244,0.3)"/>
+    <circle cx="15.7" cy="4.3" r="0.6" fill="rgba(194,224,244,0.3)"/>
+    <circle cx="4.3" cy="15.7" r="0.6" fill="rgba(194,224,244,0.3)"/>
+  </svg>
+</div>
+<div id="cursor-trail"></div>
+
+<!-- BG canvases -->
 <canvas id="bgCanvas"></canvas>
 <canvas id="snowCanvas"></canvas>
+<canvas id="emberCanvas"></canvas>
+<div class="bg-aurora"></div>
 
 <!-- SPLASH -->
 <div class="splash" id="splash" onclick="enterSite()">
   <canvas id="splashCanvas"></canvas>
-  <div class="splash-snowline"></div>
-  <div class="splash-icon" style="color: var(--b3);">❄</div>
-  <div class="splash-name">Vaelhae</div>
-  <div class="splash-sub">✦ enter the realm ✦</div>
-  <button class="splash-btn" onclick="enterSite()">Masuk</button>
-  <div class="splash-hint">klik di mana saja untuk masuk</div>
+  <div class="splash-aurora-band"></div>
+  <div class="splash-aurora-band"></div>
+  <div class="splash-aurora-band"></div>
+
+  <!-- Floating hex decor -->
+  <div class="hex-ring" style="top:15%;left:12%;width:40px;height:40px;animation-duration:7s;">
+    <svg viewBox="0 0 40 40" fill="none"><polygon points="20,2 35,11 35,29 20,38 5,29 5,11" stroke="rgba(194,224,244,0.25)" stroke-width="0.8" fill="none"/></svg>
+  </div>
+  <div class="hex-ring" style="top:25%;right:10%;width:28px;height:28px;animation-duration:9s;animation-delay:-3s;">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,1 25,7.5 25,20.5 14,27 3,20.5 3,7.5" stroke="rgba(194,224,244,0.18)" stroke-width="0.8" fill="none"/></svg>
+  </div>
+  <div class="hex-ring" style="bottom:20%;left:8%;width:20px;height:20px;animation-duration:11s;animation-delay:-5s;">
+    <svg viewBox="0 0 20 20" fill="none"><polygon points="10,1 18,5.5 18,14.5 10,19 2,14.5 2,5.5" stroke="rgba(232,144,58,0.2)" stroke-width="0.8" fill="none"/></svg>
+  </div>
+  <div class="hex-ring" style="bottom:30%;right:12%;width:32px;height:32px;animation-duration:8s;animation-delay:-2s;">
+    <svg viewBox="0 0 32 32" fill="none"><polygon points="16,1.5 28.5,8.5 28.5,23.5 16,30.5 3.5,23.5 3.5,8.5" stroke="rgba(194,224,244,0.15)" stroke-width="0.8" fill="none"/></svg>
+  </div>
+
+  <div class="splash-ground"></div>
+
+  <div class="splash-content">
+    <div class="splash-kanji">零白不知火</div>
+    <div class="splash-name">Reihaku Shiranui</div>
+    <div class="splash-ember-row">
+      <div class="s-line"></div>
+      <div class="s-dot"></div>
+      <div class="s-line r"></div>
+    </div>
+    <div class="splash-sub">Tousetsukyo — Negeri Salju Sunyi</div>
+    <button class="splash-btn" onclick="enterSite()">Masuk</button>
+    <div class="splash-hint">klik di mana saja untuk masuk</div>
+  </div>
 </div>
 
+<!-- CARD -->
 <div class="page-wrapper"><div class="card">
+
+  <!-- Frost corner decorations -->
+  <div class="frost-tl"><svg viewBox="0 0 50 50" fill="none"><path d="M2,2 L20,2 M2,2 L2,20 M8,2 L8,8 L2,8" stroke="rgba(194,224,244,1)" stroke-width="0.8"/><circle cx="2" cy="2" r="1.5" fill="rgba(194,224,244,0.8)"/></svg></div>
+  <div class="frost-tr"><svg viewBox="0 0 50 50" fill="none"><path d="M2,2 L20,2 M2,2 L2,20 M8,2 L8,8 L2,8" stroke="rgba(194,224,244,1)" stroke-width="0.8"/><circle cx="2" cy="2" r="1.5" fill="rgba(194,224,244,0.8)"/></svg></div>
+  <div class="frost-bl"><svg viewBox="0 0 50 50" fill="none"><path d="M2,2 L20,2 M2,2 L2,20 M8,2 L8,8 L2,8" stroke="rgba(194,224,244,1)" stroke-width="0.8"/><circle cx="2" cy="2" r="1.5" fill="rgba(194,224,244,0.8)"/></svg></div>
+  <div class="frost-br"><svg viewBox="0 0 50 50" fill="none"><path d="M2,2 L20,2 M2,2 L2,20 M8,2 L8,8 L2,8" stroke="rgba(194,224,244,1)" stroke-width="0.8"/><circle cx="2" cy="2" r="1.5" fill="rgba(194,224,244,0.8)"/></svg></div>
 
   <div class="banner">
     <canvas id="bannerCanvas"></canvas>
-    <div class="banner-glow"></div>
-    <div class="banner-ridge"></div>
-    <div class="banner-label">✦ the realm of vaelhae ✦</div>
+    <div class="banner-aurora-shimmer"></div>
+    <div class="mtn-far"></div>
+    <div class="mtn-near"></div>
+    <div class="mtn-snow"></div>
+    <!-- Ember sparks -->
+    <div class="banner-spark" style="width:2px;height:2px;background:#f0b060;right:22%;top:40%;animation-duration:4s;animation-delay:0s;box-shadow:0 0 4px #e8903a;"></div>
+    <div class="banner-spark" style="width:2px;height:2px;background:#e8903a;right:30%;top:50%;animation-duration:5s;animation-delay:1.5s;box-shadow:0 0 4px #e8903a;"></div>
+    <div class="banner-spark" style="width:1px;height:1px;background:#f0b060;right:18%;top:55%;animation-duration:3.5s;animation-delay:0.8s;box-shadow:0 0 3px #f0b060;"></div>
+    <div class="banner-kanji">零白不知火</div>
+    <div class="banner-label">✦ Reihaku Shiranui · 零白不知火 ✦</div>
   </div>
 
   <div class="avatar-wrapper">
     <div class="avatar-outer">
-      <div class="avatar-ring"></div>
-      <div class="avatar-ring-inner"></div>
+      <div class="avatar-glow-ring"></div>
+      <div class="avatar-ring-ember"></div>
+      <div class="avatar-ring-ice"></div>
+      <div class="avatar-ring-bg"></div>
       <div class="avatar-img">
-        <img src="https://i.ibb.co.com/B2TFBZb1/CHIBI-1.jpg" alt="Vaelhae">
+        <img src="https://i.ibb.co.com/B2TFBZb1/CHIBI-1.jpg" alt="Reihaku Shiranui">
       </div>
       <div class="avatar-shadow"></div>
-      <div class="orb-dot" style="width:4px;height:4px;background:var(--b3);animation-duration:4s;margin:-2px 0 0 -2px;box-shadow:0 0 6px var(--b3);"></div>
-      <div class="orb-dot" style="width:3px;height:3px;background:var(--ice);animation-duration:4s;animation-delay:-1.33s;margin:-1.5px 0 0 -1.5px;box-shadow:0 0 5px var(--ice);"></div>
-      <div class="orb-dot" style="width:3px;height:3px;background:var(--frost);animation-duration:4s;animation-delay:-2.66s;margin:-1.5px 0 0 -1.5px;box-shadow:0 0 5px var(--frost);"></div>
+      <!-- 4 hex orbit dots — ice x3, ember x1 -->
+      <div class="hex-dot" style="--start:0deg;animation-duration:5s;"><div style="width:4px;height:4px;border-radius:50%;background:var(--ice2);box-shadow:0 0 6px var(--ice2);margin:-2px 0 0 -2px;"></div></div>
+      <div class="hex-dot" style="--start:90deg;animation-duration:5s;animation-delay:-1.25s;"><div style="width:3px;height:3px;border-radius:50%;background:var(--frost);box-shadow:0 0 5px var(--frost);margin:-1.5px 0 0 -1.5px;"></div></div>
+      <div class="hex-dot" style="--start:180deg;animation-duration:5s;animation-delay:-2.5s;"><div style="width:3px;height:3px;border-radius:50%;background:var(--ice);box-shadow:0 0 5px var(--ice);margin:-1.5px 0 0 -1.5px;"></div></div>
+      <div class="hex-dot" style="--start:270deg;animation-duration:5s;animation-delay:-3.75s;"><div style="width:3px;height:3px;border-radius:50%;background:var(--ember);box-shadow:0 0 6px rgba(232,144,58,0.7);margin:-1.5px 0 0 -1.5px;opacity:0.6;"></div></div>
     </div>
   </div>
 
   <div class="info">
-    <div class="username">Vaelhae</div>
-    <div class="tag">✦ streamer · dreamer ✦</div>
+    <div class="username reveal" style="animation-delay:0.1s">Reihaku Shiranui</div>
+    <div class="lore-name reveal" style="animation-delay:0.2s">零白不知火 — Vaelhae</div>
+    <div class="tag reveal" style="animation-delay:0.3s">✦ Roh Senja yang Tak Pernah Mencair ✦</div>
 
-    <div class="divider"><span>❄</span></div>
+    <div class="divider reveal" style="animation-delay:0.35s">
+      <div class="div-line"></div>
+      <div class="div-center">
+        <span class="div-ice">❄</span>
+        <span class="div-fire">🔥</span>
+        <span class="div-ice">❄</span>
+      </div>
+      <div class="div-line r"></div>
+    </div>
 
-    <div class="desc">
-      selamat datang di dunia Vaelhae —<br>
-      tempat cerita malam dan layar menyatu.<br>
-      <em>ikuti perjalanannya ✨</em>
+    <div class="desc reveal" style="animation-delay:0.4s">
+      Lahir dari inti badai di <em>Tousetsukyo</em> — Negeri Salju Sunyi.<br>
+      Bukan roh biasa. Bukan manusia biasa.<br><br>
+      Ia adalah <em class="fire">api yang lahir dalam es</em> —<br>
+      anomali yang bisa mengakhiri musim dingin…<br>
+      <em>atau membuatnya abadi.</em>
+    </div>
+
+    <div class="lore-snippet reveal" style="animation-delay:0.5s">
+      <p>
+        "Jika Reihaku Shiranui sepenuhnya menjadi <em>manusia</em>...<br>
+        Negeri Salju Sunyi akan mencair untuk pertama kalinya."
+      </p>
     </div>
 
     <div class="links">
-      <a href="https://bagibagi.co/vaelhae" class="btn btn-donate">
-        <span class="btn-icon"><img src="https://cdn.simpleicons.org/kofi/4a9fd4" alt="Donate" style="width:14px;height:14px;object-fit:contain;"></span>
-        <span class="btn-label"><span class="btn-name">Donate</span><span class="btn-sub">BagiBagi ☕</span></span>
-        <span class="btn-arrow">→</span>
-      </a>
-      <a href="https://discord.gg/Gc8mhCyjHb" class="btn">
-        <span class="btn-icon"><img src="https://cdn.simpleicons.org/discord/8ac8e8" alt="Discord" style="width:14px;height:14px;object-fit:contain;"></span>
-        <span class="btn-label"><span class="btn-name">🌙 Ruang Tengah Malam</span><span class="btn-sub">Discord Server · Free To Join</span></span>
-        <span class="btn-arrow">→</span>
-      </a>
-      <a href="https://discord.gg/E3eUvkqCPB" class="btn">
-        <span class="btn-icon"><img src="https://cdn.simpleicons.org/discord/8ac8e8" alt="Discord" style="width:14px;height:14px;object-fit:contain;"></span>
-        <span class="btn-label"><span class="btn-name">🌿 The Canopy (Hub)</span><span class="btn-sub">Discord Server · Free To Join</span></span>
-        <span class="btn-arrow">→</span>
-      </a>
-      <a href="https://tiktok.com/@vaelhae" class="btn">
+      <a href="https://tiktok.com/@vaelhae" class="btn reveal" style="animation-delay:0.55s">
         <span class="btn-icon"><img src="https://cdn.simpleicons.org/tiktok/c2e0f4" alt="TikTok" style="width:14px;height:14px;object-fit:contain;"></span>
         <span class="btn-label"><span class="btn-name">TikTok</span><span class="btn-sub">@vaelhae</span></span>
         <span class="btn-arrow">→</span>
       </a>
-      <a href="https://youtube.com/@vaelhae" class="btn btn-yt">
+      <a href="https://youtube.com/@vaelhae" class="btn btn-yt reveal" style="animation-delay:0.62s">
         <span class="btn-icon"><img src="https://cdn.simpleicons.org/youtube/ff4444" alt="YouTube" style="width:14px;height:14px;object-fit:contain;"></span>
         <span class="btn-label"><span class="btn-name">YouTube</span><span class="btn-sub">Vaelhae</span></span>
         <span class="btn-arrow">→</span>
       </a>
+      <a href="https://discord.gg/Gc8mhCyjHb" class="btn reveal" style="animation-delay:0.69s">
+        <span class="btn-icon"><img src="https://cdn.simpleicons.org/discord/8ac8e8" alt="Discord" style="width:14px;height:14px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">🌙 Ruang Tengah Malam</span><span class="btn-sub">Discord Server · Free To Join</span></span>
+        <span class="btn-arrow">→</span>
+      </a>
+      <a href="https://discord.gg/E3eUvkqCPB" class="btn reveal" style="animation-delay:0.76s">
+        <span class="btn-icon"><img src="https://cdn.simpleicons.org/discord/8ac8e8" alt="Discord" style="width:14px;height:14px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">🌿 The Canopy (Hub)</span><span class="btn-sub">Discord Server · Free To Join</span></span>
+        <span class="btn-arrow">→</span>
+      </a>
+      <a href="https://bagibagi.co/vaelhae" class="btn btn-donate reveal" style="animation-delay:0.83s">
+        <span class="btn-icon"><img src="https://cdn.simpleicons.org/kofi/e8903a" alt="Donate" style="width:14px;height:14px;object-fit:contain;"></span>
+        <span class="btn-label"><span class="btn-name">Donate</span><span class="btn-sub">BagiBagi ☕</span></span>
+        <span class="btn-arrow">→</span>
+      </a>
     </div>
 
-    <div class="music-player">
+    <div class="music-player reveal" style="animation-delay:0.9s">
       <button class="music-play-btn" id="playBtn" onclick="togglePlay()">▶</button>
       <div class="music-info">
-        <div class="music-title">✦ now playing...</div>
+        <div class="music-title" id="musicTitle">✦ now playing...</div>
         <div class="music-bar" onclick="seekTo(event,this)">
           <div class="music-progress" id="progress"></div>
         </div>
         <div class="music-time" id="timeDisplay">0:00 / 0:00</div>
       </div>
       <div class="eq">
-        <div class="eq-bar" style="animation-duration:0.65s;"></div>
-        <div class="eq-bar" style="animation-duration:0.5s;animation-delay:0.1s;"></div>
-        <div class="eq-bar" style="animation-duration:0.75s;animation-delay:0.2s;"></div>
-        <div class="eq-bar" style="animation-duration:0.55s;animation-delay:0.05s;"></div>
+        <div class="eq-bar" style="animation-duration:0.6s;"></div>
+        <div class="eq-bar" style="animation-duration:0.45s;animation-delay:0.08s;"></div>
+        <div class="eq-bar" style="animation-duration:0.7s;animation-delay:0.18s;"></div>
+        <div class="eq-bar" style="animation-duration:0.5s;animation-delay:0.04s;"></div>
       </div>
       <div class="music-vol">
         <span class="vol-icon">♪</span>
@@ -446,120 +1067,260 @@
       <source src="https://raw.githubusercontent.com/VaelHae/Backsound/refs/heads/main/Death%20Bed%20(Instrumental)%20-%20Powfu%20(feat.%20beabadoobee).mp3" type="audio/mpeg">
     </audio>
 
-    <div class="footer">
-      <div class="footer-line"></div>
-      VaelHae © 2026
+    <div class="footer reveal" style="animation-delay:1s">
+      <div class="footer-divider"><span class="footer-sym">❄ · 🔥 · ❄</span></div>
+      <div class="footer-text">VaelHae © 2026</div>
+      <div class="footer-lore">零白 · 不知火 · Tousetsukyo</div>
     </div>
   </div>
 </div></div>
 
 <script>
-// ── SPLASH CANVAS — stars only, clean
+// ══ CURSOR
+const cursor = document.getElementById('cursor');
+const trail  = document.getElementById('cursor-trail');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+  trail.style.left  = e.clientX + 'px';
+  trail.style.top   = e.clientY + 'px';
+});
+document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%,-50%) scale(0.8)');
+document.addEventListener('mouseup',   () => cursor.style.transform = 'translate(-50%,-50%) scale(1)');
+
+// ══ SPLASH CANVAS — stars + aurora shimmer + shooting stars
 const sc = document.getElementById('splashCanvas');
-sc.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
+sc.style.cssText = 'position:absolute;inset:0;pointer-events:none;width:100%;height:100%;';
 const sCtx = sc.getContext('2d');
 function rS(){ sc.width=window.innerWidth; sc.height=window.innerHeight; }
 rS();
 
-const sStars = Array.from({length:180}, ()=>({
+const sStars = Array.from({length:220}, ()=>({
   x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
-  r:Math.random()*1.3, a:Math.random(), d:Math.random()>.5?1:-1,
-  sp:0.003+Math.random()*0.006
+  r:Math.random()*1.5, a:Math.random()*.7, d:Math.random()>.5?1:-1,
+  sp:0.003+Math.random()*.007,
+  ember:Math.random()<0.04
 }));
 
 const shoots=[];
-function spawn(){ shoots.push({x:Math.random()*window.innerWidth*.7, y:Math.random()*window.innerHeight*.4, len:70+Math.random()*100, sp:6+Math.random()*6, p:0, ang:Math.PI/5+(Math.random()-.5)*.3}); }
-setInterval(spawn, 2400); spawn();
+function spawnShoot(){
+  shoots.push({
+    x:Math.random()*window.innerWidth*.65,
+    y:Math.random()*window.innerHeight*.4,
+    len:80+Math.random()*130, sp:5+Math.random()*8, p:0,
+    ang:Math.PI/5+(Math.random()-.5)*.4
+  });
+}
+setInterval(spawnShoot, 3000); spawnShoot(); spawnShoot();
 
+let sT=0;
 function dS(){
+  sT+=0.003;
   sCtx.clearRect(0,0,sc.width,sc.height);
-  sStars.forEach(s=>{ s.a+=s.d*s.sp; if(s.a>1||s.a<.04)s.d*=-1;
+
+  // Volumetric aurora bands — canvas layer
+  const bands=[
+    {yBase:0.06, h:0.18, c:'rgba(194,224,244,0.055)', spd:1.0,  skew:0.06},
+    {yBase:0.12, h:0.12, c:'rgba(142,200,232,0.04)',  spd:0.7,  skew:-0.05},
+    {yBase:0.20, h:0.08, c:'rgba(194,224,244,0.032)', spd:1.25, skew:0.04},
+  ];
+  sCtx.save();
+  bands.forEach((b,i)=>{
+    const yOff=Math.sin(sT*b.spd+i*1.4)*sc.height*0.022;
+    const xOff=Math.cos(sT*b.spd*.6+i)*sc.width*0.04;
+    const y=sc.height*b.yBase+yOff;
+    const h=sc.height*b.h*(0.8+Math.sin(sT*b.spd*.8+i)*.2);
+    sCtx.save();
+    sCtx.transform(1,b.skew*Math.sin(sT*.5),0,1,xOff,0);
+    const grd=sCtx.createLinearGradient(0,y,0,y+h);
+    grd.addColorStop(0,'transparent');
+    grd.addColorStop(0.35,b.c);
+    grd.addColorStop(0.65,b.c);
+    grd.addColorStop(1,'transparent');
+    sCtx.filter='blur(14px)';
+    sCtx.fillStyle=grd;
+    sCtx.fillRect(-sc.width*.1,y,sc.width*1.2,h);
+    sCtx.restore();
+  });
+  sCtx.filter='none';
+  sCtx.restore();
+
+  sStars.forEach(s=>{
+    s.a+=s.d*s.sp; if(s.a>.7||s.a<.03)s.d*=-1;
     sCtx.beginPath(); sCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    sCtx.fillStyle=`rgba(194,224,244,${s.a*.65})`; sCtx.fill(); });
+    sCtx.fillStyle=s.ember?`rgba(240,176,96,${s.a*.5})`:`rgba(194,224,244,${s.a*.7})`;
+    sCtx.fill();
+  });
   for(let i=shoots.length-1;i>=0;i--){
     const ss=shoots[i]; ss.p+=ss.sp;
     const fade=Math.max(0,1-ss.p/ss.len);
     const x2=ss.x+ss.p*Math.cos(ss.ang), y2=ss.y+ss.p*Math.sin(ss.ang);
-    const x1=ss.x+Math.max(0,ss.p-80)*Math.cos(ss.ang), y1=ss.y+Math.max(0,ss.p-80)*Math.sin(ss.ang);
+    const x1=ss.x+Math.max(0,ss.p-100)*Math.cos(ss.ang), y1=ss.y+Math.max(0,ss.p-100)*Math.sin(ss.ang);
     const g=sCtx.createLinearGradient(x1,y1,x2,y2);
-    g.addColorStop(0,'rgba(168,216,240,0)'); g.addColorStop(1,`rgba(220,240,255,${fade*.8})`);
-    sCtx.beginPath(); sCtx.strokeStyle=g; sCtx.lineWidth=1.2;
+    g.addColorStop(0,'rgba(194,224,244,0)');
+    g.addColorStop(0.8,`rgba(220,240,255,${fade*.6})`);
+    g.addColorStop(1,`rgba(255,255,255,${fade*.9})`);
+    sCtx.beginPath(); sCtx.strokeStyle=g; sCtx.lineWidth=1.4;
     sCtx.moveTo(x1,y1); sCtx.lineTo(x2,y2); sCtx.stroke();
-    if(ss.p>ss.len+80)shoots.splice(i,1);
+    if(ss.p>ss.len+100)shoots.splice(i,1);
   }
   requestAnimationFrame(dS);
 }
 dS();
 
-// ── BG CANVAS
-const bgC = document.getElementById('bgCanvas');
+// ══ BG CANVAS — deep starfield with depth layers
+const bgC=document.getElementById('bgCanvas');
 bgC.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;';
-const bgCtx = bgC.getContext('2d');
+const bgCtx=bgC.getContext('2d');
 function rB(){ bgC.width=window.innerWidth; bgC.height=window.innerHeight; }
 rB();
 window.addEventListener('resize',()=>{ rS(); rB(); });
 
-const bgStars = Array.from({length:120}, ()=>({
+const bgStars=Array.from({length:160},()=>({
   x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
-  r:Math.random()*1.1, a:Math.random()*.4,
-  d:Math.random()>.5?1:-1, sp:0.002+Math.random()*0.004
+  r:Math.random()*1.2, a:Math.random()*.45,
+  d:Math.random()>.5?1:-1, sp:0.002+Math.random()*.005,
+  ember:Math.random()<0.025
 }));
+let bgT=0;
 function dB(){
+  bgT+=0.004;
   bgCtx.clearRect(0,0,bgC.width,bgC.height);
-  bgStars.forEach(s=>{ s.a+=s.d*s.sp; if(s.a>.4||s.a<.01)s.d*=-1;
+
+  // Soft volumetric nebula blobs — very slow drift
+  const nebs=[
+    {x:bgC.width*.25, y:bgC.height*.2, r:bgC.width*.35, c:'rgba(194,224,244,0.025)', t:bgT*.4},
+    {x:bgC.width*.75, y:bgC.height*.5, r:bgC.width*.3,  c:'rgba(142,200,232,0.02)',  t:bgT*.3+1},
+    {x:bgC.width*.5,  y:bgC.height*.8, r:bgC.width*.25, c:'rgba(232,144,58,0.01)',   t:bgT*.25+2},
+  ];
+  nebs.forEach(n=>{
+    const dx=Math.sin(n.t)*30, dy=Math.cos(n.t*0.7)*20;
+    const grd=bgCtx.createRadialGradient(n.x+dx,n.y+dy,0,n.x+dx,n.y+dy,n.r);
+    grd.addColorStop(0,n.c); grd.addColorStop(1,'transparent');
+    bgCtx.fillStyle=grd; bgCtx.fillRect(0,0,bgC.width,bgC.height);
+  });
+
+  bgStars.forEach(s=>{
+    s.a+=s.d*s.sp; if(s.a>.45||s.a<.01)s.d*=-1;
     bgCtx.beginPath(); bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    bgCtx.fillStyle=`rgba(168,216,240,${s.a})`; bgCtx.fill(); });
+    bgCtx.fillStyle=s.ember?`rgba(240,176,96,${s.a*.45})`:`rgba(194,224,244,${s.a})`;
+    bgCtx.fill();
+    // Rare star with soft halo
+    if(s.r>1 && s.a>0.35){
+      const halo=bgCtx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*4);
+      halo.addColorStop(0,`rgba(194,224,244,${s.a*0.15})`);
+      halo.addColorStop(1,'transparent');
+      bgCtx.fillStyle=halo; bgCtx.fillRect(s.x-s.r*4,s.y-s.r*4,s.r*8,s.r*8);
+    }
+  });
   requestAnimationFrame(dB);
 }
 dB();
 
-// ── SNOW CANVAS — gentle, sparse
-const snowC = document.getElementById('snowCanvas');
+// ══ SNOW — 3 depth layers with different speeds
+const snowC=document.getElementById('snowCanvas');
 snowC.style.cssText='position:fixed;inset:0;z-index:1;pointer-events:none;';
-const snowCtx = snowC.getContext('2d');
+const snowCtx=snowC.getContext('2d');
 function rSn(){ snowC.width=window.innerWidth; snowC.height=window.innerHeight; }
 rSn();
 
-const flakes = Array.from({length:50}, ()=>({
-  x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
-  r:.5+Math.random()*1.8, vy:.2+Math.random()*.5, vx:(Math.random()-.5)*.25,
-  a:.2+Math.random()*.35, w:Math.random()*Math.PI*2, ws:.015+Math.random()*.02
-}));
+const flakes=Array.from({length:70},()=>{
+  const layer=Math.floor(Math.random()*3); // 0=far,1=mid,2=near
+  return {
+    x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    r:layer===0?0.6:layer===1?1.2:2,
+    vy:layer===0?0.15:layer===1?0.3:0.6,
+    vx:(Math.random()-.5)*(layer===0?0.1:0.2),
+    a:layer===0?0.15:layer===1?0.25:0.35,
+    w:Math.random()*Math.PI*2, ws:0.01+Math.random()*.02,
+    layer
+  };
+});
+
 function dSn(){
   snowCtx.clearRect(0,0,snowC.width,snowC.height);
   flakes.forEach(f=>{
-    f.y+=f.vy; f.w+=f.ws; f.x+=f.vx+Math.sin(f.w)*.4;
+    f.y+=f.vy; f.w+=f.ws; f.x+=f.vx+Math.sin(f.w)*0.3;
     if(f.y>snowC.height+5){ f.y=-5; f.x=Math.random()*snowC.width; }
     if(f.x>snowC.width+5) f.x=-5;
     if(f.x<-5) f.x=snowC.width+5;
     snowCtx.beginPath(); snowCtx.arc(f.x,f.y,f.r,0,Math.PI*2);
-    snowCtx.fillStyle=`rgba(230,245,255,${f.a})`; snowCtx.fill();
+    snowCtx.fillStyle=`rgba(220,240,255,${f.a})`;
+    snowCtx.fill();
+    if(f.r>1.5){
+      snowCtx.beginPath(); snowCtx.arc(f.x-f.r*.3,f.y-f.r*.3,f.r*.25,0,Math.PI*2);
+      snowCtx.fillStyle=`rgba(255,255,255,${f.a*.5})`; snowCtx.fill();
+    }
   });
   requestAnimationFrame(dSn);
 }
 dSn();
 
-// ── BANNER CANVAS — minimal stars
-const bC = document.getElementById('bannerCanvas');
-const bCtx = bC.getContext('2d');
-function rBn(){ bC.width=bC.offsetWidth||390; bC.height=110; }
+// ══ EMBER CANVAS — rising ember particles (the hidden fire)
+const embC=document.getElementById('emberCanvas');
+embC.style.cssText='position:fixed;inset:0;z-index:1;pointer-events:none;';
+const embCtx=embC.getContext('2d');
+function rEm(){ embC.width=window.innerWidth; embC.height=window.innerHeight; }
+rEm();
+
+const embers=Array.from({length:18},()=>({
+  x:window.innerWidth*.35+Math.random()*window.innerWidth*.3,
+  y:window.innerHeight+Math.random()*100,
+  r:0.4+Math.random()*.8,
+  vy:-(0.3+Math.random()*.5),
+  vx:(Math.random()-.5)*.3,
+  a:0, maxA:0.25+Math.random()*.25,
+  life:0, maxLife:120+Math.random()*80,
+  w:Math.random()*Math.PI*2, ws:0.04+Math.random()*.04
+}));
+
+function dEm(){
+  embCtx.clearRect(0,0,embC.width,embC.height);
+  embers.forEach(e=>{
+    e.life++; e.y+=e.vy; e.w+=e.ws; e.x+=e.vx+Math.sin(e.w)*.15;
+    const prog=e.life/e.maxLife;
+    e.a=prog<0.2?e.maxA*(prog/0.2):prog>0.7?e.maxA*(1-(prog-0.7)/0.3):e.maxA;
+    if(e.life>=e.maxLife){
+      e.life=0; e.y=window.innerHeight+Math.random()*50;
+      e.x=window.innerWidth*.3+Math.random()*window.innerWidth*.4;
+    }
+    embCtx.beginPath(); embCtx.arc(e.x,e.y,e.r,0,Math.PI*2);
+    embCtx.fillStyle=`rgba(232,144,58,${e.a})`;
+    if(e.a>0.1) embCtx.shadowColor=`rgba(240,176,96,${e.a})`;
+    embCtx.shadowBlur=4;
+    embCtx.fill();
+    embCtx.shadowBlur=0;
+  });
+  requestAnimationFrame(dEm);
+}
+dEm();
+
+// ══ BANNER CANVAS
+const bC=document.getElementById('bannerCanvas');
+const bCtx=bC.getContext('2d');
+function rBn(){ bC.width=bC.offsetWidth||390; bC.height=140; }
 rBn();
-const bStars = Array.from({length:40}, ()=>({
-  x:Math.random()*400, y:Math.random()*80, r:.4+Math.random()*1,
-  a:Math.random()*.6, d:Math.random()>.5?1:-1, sp:.004+Math.random()*.008
+const bStars=Array.from({length:55},()=>({
+  x:Math.random()*400, y:Math.random()*90,
+  r:.4+Math.random()*1, a:Math.random()*.6,
+  d:Math.random()>.5?1:-1, sp:.005+Math.random()*.01,
+  ember:Math.random()<0.04
 }));
 function dBn(){
-  bCtx.clearRect(0,0,bC.width,110);
-  bStars.forEach(s=>{ s.a+=s.d*s.sp; if(s.a>.6||s.a<.04)s.d*=-1;
+  bCtx.clearRect(0,0,bC.width,140);
+  bStars.forEach(s=>{
+    s.a+=s.d*s.sp; if(s.a>.6||s.a<.04)s.d*=-1;
     bCtx.beginPath(); bCtx.arc(s.x%bC.width,s.y,s.r,0,Math.PI*2);
-    bCtx.fillStyle=`rgba(168,216,240,${s.a*.7})`; bCtx.fill(); });
+    bCtx.fillStyle=s.ember?`rgba(240,176,96,${s.a*.5})`:`rgba(194,224,244,${s.a*.7})`;
+    bCtx.fill();
+  });
   requestAnimationFrame(dBn);
 }
 dBn();
 
-// ── MUSIC
-const audio = document.getElementById('bgAudio');
-audio.volume = .5; let playing = false;
+// ══ MUSIC
+const audio=document.getElementById('bgAudio');
+audio.volume=.5; let playing=false;
 function togglePlay(){
   if(playing){ audio.pause(); document.getElementById('playBtn').textContent='▶'; document.querySelectorAll('.eq-bar').forEach(b=>b.classList.remove('playing')); }
   else{ audio.play(); document.getElementById('playBtn').textContent='⏸'; document.querySelectorAll('.eq-bar').forEach(b=>b.classList.add('playing')); }
@@ -574,9 +1335,14 @@ audio.addEventListener('timeupdate',()=>{
 });
 function seekTo(e,el){ const r=el.getBoundingClientRect(); audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration; }
 
+// ══ ENTER SITE
 function enterSite(){
   document.getElementById('splash').classList.add('hide');
-  audio.play().then(()=>{ playing=true; document.getElementById('playBtn').textContent='⏸'; document.querySelectorAll('.eq-bar').forEach(b=>b.classList.add('playing')); }).catch(e=>console.log(e));
+  audio.play().then(()=>{
+    playing=true;
+    document.getElementById('playBtn').textContent='⏸';
+    document.querySelectorAll('.eq-bar').forEach(b=>b.classList.add('playing'));
+  }).catch(e=>console.log(e));
 }
 </script>
 </body>
